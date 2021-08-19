@@ -1,0 +1,67 @@
+<div class="container" fxLayout="column wrap" fxLayoutAlign="center center" fxLayoutGap="1%">
+
+  <div class="grid">
+
+    <div class="search" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+      <mat-form-field fxFlex="70">
+        <input matInput placeholder="Buscar">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="Ordernar por" fxFlex [(ngModel)]="this.filters.orderBy">
+          <mat-option [value]="1">Más relevante</mat-option>
+          <mat-option [value]="2">Menor precio</mat-option>
+          <mat-option [value]="3">Mayor precio</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+    <div class="space-line"></div>
+
+    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+
+      <div fxFlex="25" class="filters" fxLayout="column wrap">
+        <mat-form-field>
+          <mat-select placeholder="Categorías" multiple>
+            <mat-option [value]="1">Zapatillas</mat-option>
+            <mat-option [value]="2">Botines</mat-option>
+            <mat-option [value]="3">Ojotas</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Marcas" multiple>
+            <mat-option [value]="1">Adidas</mat-option>
+            <mat-option [value]="2">Nike</mat-option>
+            <mat-option [value]="3">Fila</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex="70">
+        <mat-card>
+          <div fxLayout="row wrap" fxLayoutAlign="center center">
+            <app-product-item></app-product-item>
+            <app-product-item></app-product-item>
+            <app-product-item></app-product-item>
+
+            <app-product-item></app-product-item>
+            <app-product-item></app-product-item>
+            <app-product-item></app-product-item>
+
+            <app-product-item></app-product-item>
+            <app-product-item></app-product-item>
+            <app-product-item></app-product-item>
+          </div>
+        </mat-card>
+      </div>
+
+    </div>
+
+    <mat-paginator [length]="20"></mat-paginator>
+
+  </div>
+
+</div>

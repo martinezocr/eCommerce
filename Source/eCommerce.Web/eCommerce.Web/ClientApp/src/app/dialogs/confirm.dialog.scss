@@ -1,0 +1,20 @@
+@import "./src/styles-variables";
+
+td {
+  white-space: pre;
+}
+
+.table_alert_dialog td{
+  width: 100%;
+  display: block;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.table_alert_dialog td mat-icon.icon_alert {
+  color: $base-color;
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+}

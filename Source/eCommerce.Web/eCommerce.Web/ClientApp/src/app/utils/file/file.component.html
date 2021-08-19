@@ -1,0 +1,11 @@
+<ng-container [ngSwitch]="file.mimeType.split('/')[0]">
+  <img *ngSwitchCase="'image'" [src]="url()" />
+  <audio *ngSwitchCase="'audio'" controls>
+    <source [src]="url()" [type]="file.mimeType">
+    <span>Su navegador no soporta la etiqueta audio</span>
+  </audio>
+  <video *ngSwitchCase="'video'" controls>
+    <source [src]="url()" [type]="file.mimeType">
+    <span>Su navegador no soporta la etiqueta video</span>
+  </video>
+</ng-container>

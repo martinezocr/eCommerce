@@ -1,0 +1,17 @@
+.grid {
+  width: 1215px;
+}
+
+.space-line {
+  margin-top: 10% !important;
+}
+
+.image-principal-container {
+  max-width: 700px;
+  max-height: 700px;
+
+  .image-principal {
+    max-width: 650px;
+    max-height: 650px;
+  }
+}

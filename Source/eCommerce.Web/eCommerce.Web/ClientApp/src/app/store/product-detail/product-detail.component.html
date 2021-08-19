@@ -1,0 +1,39 @@
+<div class="container" fxLayout="row wrap" fxLayoutAlign="center space-between">
+  <div class="grid">
+    <mat-card>
+      <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+
+        <div fxFlex="65">
+          <div class="image-principal-container" fxLayoutAlign="center center">
+            <img class="image-principal" src="https://http2.mlstatic.com/D_NQ_NP_911295-MLA45105654632_032021-O.webp" />
+          </div>
+          <hr />
+          <div>
+            <h4>Descripción</h4>
+            <p>
+              Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+              Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,
+              when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            </p>
+          </div>
+        </div>
+        <div fxFlex="30">
+          <div fxLayout="row wrap" fxLayoutAlign="start start">
+            <h3>Titulo del producto que se está mostrando</h3>
+            <h2>{{1500 | currency}}</h2>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+
+    <br />
+    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+      <h2 fxFlex="100">Productos relacionados</h2>
+      <app-product-item></app-product-item>
+      <app-product-item></app-product-item>
+      <app-product-item></app-product-item>
+      <app-product-item></app-product-item>
+    </div>
+
+  </div>
+</div>

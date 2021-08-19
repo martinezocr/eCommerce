@@ -1,0 +1,42 @@
+<div class="spinner-container" *ngIf="working">
+  <mat-spinner></mat-spinner>
+</div>
+<h2 mat-dialog-title>Usuario</h2>
+<form [formGroup]="userForm">
+  <mat-dialog-content class="mat-typography">
+    <div fxLayout="row wrap" fxLayoutGap="1%">
+      <mat-form-field fxFlex="73">
+        <input matInput cdkFocusInitial placeholder="Usuario/Login" maxlength="255" formControlName="username">
+      </mat-form-field>
+      <mat-slide-toggle fxFlex="20" fxFlexOffset="5%" fxFlexAlign="center" formControlName="isActive" [color]="'primary'">Activo</mat-slide-toggle>
+      <mat-form-field fxFlex="99">
+        <input matInput placeholder="Email" formControlName="email">
+      </mat-form-field>
+      <mat-form-field fxFlex="99">
+        <mat-select placeholder="Empresa" formControlName="enterpriseId">
+          <mat-option *ngFor="let enterprise of enterpriseList" [value]="enterprise.enterpriseId">
+            {{enterprise.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field fxFlex="99">
+        <mat-select placeholder="Roles" formControlName="roles" multiple>
+          <mat-option [value]="255">Administrador</mat-option>
+          <mat-option [value]="1">Usuario</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field fxFlex="49">
+        <input type="password" maxlength="50" matInput placeholder="Contraseña" formControlName="password">
+      </mat-form-field>
+      <mat-form-field [class.mat-form-field-invalid]="userForm.hasError('notSame')" fxFlex="49">
+        <input type="password" maxlength="50" matInput placeholder="Repetir contraseña" formControlName="confirmPassword">
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <div>
+      <button mat-button (click)="cancel()" type="button">Cancelar</button>
+      <button mat-button (click)="save()" type="submit">Guardar</button>
+    </div>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,49 @@
+/*Base*/
+$base-color: #e03e52;
+$base-color-highlight: rgba( 224,62,82,0.95 );
+$alternative-color: #236192;
+$body: #f6f6f6;
+$body-text: #000;
+$color-danger: rgb(192, 1, 1);
+$field-color: #a2acab;
+$gray: #a2acab;
+$field-icon-color: rgba(255,255,255,.7);
+$caret: #555;
+
+/*Login*/
+$back-card: #fff;
+$back-toolbar: #fff;
+$color-icon-mobile: #222;
+
+/*Scrollbars*/
+$scroll-track: rgba(255, 255, 255, .2);
+$scroll-track-active: rgba(255, 255, 255, .4);
+$scroll-thumb: #303030;
+$scroll-thumb-active: #222;
+
+/*Header*/
+$color-header-from: #222;
+$color-header: #222;
+
+/*BTNS*/
+$btn-color: $base-color;
+$btn-color-secondary: white;
+$btn-disabled: #e6e6e6;
+$btn-back-delete: rgb(192, 1, 1);
+$color-secondary: $base-color;
+$controls-opacity: .7;
+
+/*Titles Cards*/
+$titles-color: #555;
+$color-borders: #e03e52;
+
+/*Tables*/
+$grid-header: transparent;
+$background-color: #cecece;
+$btn-table-headers: $base-color;
+$btn-table-headers-title: #5f5f5f;
+$btn-table-headers-icons: white;
+$btn-table-body-icons: white;
+
+/*Loader*/
+$spinner-color: $base-color;

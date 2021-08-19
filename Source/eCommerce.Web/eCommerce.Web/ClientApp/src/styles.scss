@@ -1,0 +1,32 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Provide sufficient contrast against white background */
+@import 'styles-variables.scss';
+a {
+  color: #0366d6;
+}
+
+code {
+  color: #e01a76;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  /*background-image: url('assets/img/bg.jpg');*/
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-family: 'Lato', sans-serif;
+  font-size: 1em;
+  min-height: 100vh;
+  background: $body;
+  color: $body-text;
+  /*scrollbar-color: yellow blue;*/
+}

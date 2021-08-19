@@ -1,0 +1,45 @@
+<mat-toolbar>
+  <mat-toolbar-row>
+    <span>eCommerce</span>
+    <span class="space-between"></span>
+    <button mat-icon-button>
+      <mat-icon matBadge="15" matBadgeColor="warn">favorite</mat-icon>
+    </button>
+    <button mat-icon-button>
+      <mat-icon>person</mat-icon>
+    </button>
+  </mat-toolbar-row>
+
+  <mat-toolbar-row>
+    <ng-container>
+      <div class="menu-desktop">
+        <ng-container >
+          <a mat-button [routerLinkActive]="['active']" [routerLink]="['/']"><mat-icon>home</mat-icon>&nbsp; Inicio</a>
+          <a mat-button [routerLinkActive]="['active']" [routerLink]="['/tienda/productos']"><mat-icon>storefront</mat-icon>&nbsp; Productos</a>
+          <a mat-button [routerLinkActive]="['active']" [routerLink]="['/contacto']"><mat-icon>contact_page</mat-icon>&nbsp; Contacto</a>
+          <a mat-button [routerLinkActive]="['active']" [routerLink]="['/administrador']"><mat-icon>contact_page</mat-icon>&nbsp; Admin</a>
+          <!--<ng-container *ngIf="userService.hasRole([UserRole.Admin])">
+            <a mat-button [matMenuTriggerFor]="adminMenu"><mat-icon>settings</mat-icon> Herramientas<mat-icon>arrow_drop_down</mat-icon></a>
+            <mat-menu #adminMenu="matMenu">
+              <a mat-menu-item [routerLinkActive]="['active']" [routerLink]="['/importar']"><mat-icon>publish</mat-icon>Importar</a>
+              <a mat-menu-item [routerLinkActive]="['active']" [routerLink]="['/admin/cerrar-reportes']"><mat-icon>fact_check</mat-icon>Cerrar Reportes</a>
+            </mat-menu>
+          </ng-container>-->
+        </ng-container>
+      </div>
+
+    </ng-container>
+    <span class="space-between"></span>
+    <button mat-icon-button>
+      <mat-icon matBadge="2" matBadgeColor="warn">shopping_cart</mat-icon>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<router-outlet></router-outlet>
+
+<footer>
+  <div id="btmFooter" flex>
+    <p>Basic Footer</p>
+  </div>
+</footer>

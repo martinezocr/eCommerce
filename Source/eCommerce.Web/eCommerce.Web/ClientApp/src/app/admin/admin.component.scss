@@ -1,0 +1,47 @@
+.topmenu-icon {
+  padding: 0 14px;
+}
+
+.topmenu-spacer {
+  flex: 1 1 auto;
+}
+
+.menu-desktop {
+  display: block;
+}
+
+.menu-mobile {
+  display: none;
+}
+
+.lazy-loading {
+  position: absolute;
+  top: 64px;
+  width: 100vw;
+  height: 4px;
+  z-index: 1000;
+}
+
+.logo {
+  width: 450px;
+  max-width: 450px;
+  height: 100% !important;
+}
+
+@media (max-width: 920px) {
+  .menu-desktop {
+    display: none;
+  }
+
+  .menu-mobile {
+    display: block;
+  }
+
+  .mat-toolbar-row img {
+    max-width: 200px;
+  }
+
+  .mat-toolbar-row, .mat-toolbar-single-row {
+    height: 72px !important;
+  }
+}

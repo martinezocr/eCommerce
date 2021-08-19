@@ -1,0 +1,17 @@
+mat-toolbar {
+  background: #000;
+  color: #fff;
+  margin-bottom: 3%;
+
+  .space-between {
+    flex: 1 1 auto;
+  }
+}
+
+footer {
+  background-color: #ddd;
+  border-top: 1px solid #bbb;
+  text-align: center;
+  height:100%;
+}
+
