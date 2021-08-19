@@ -22,6 +22,23 @@
             <h3>Titulo del producto que se está mostrando</h3>
             <h2>{{1500 | currency}}</h2>
           </div>
+          <div fxLayout="row wrap" fxLayoutAlign="start start">
+            <button mat-icon-button>
+              <mat-icon>minimize</mat-icon>
+            </button>
+            <mat-form-field fxFlex="10">
+              <input matInput>
+            </mat-form-field>
+            <button mat-icon-button>
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          <button mat-flat-button color="primary">Comprar</button>
+          <button mat-flat-button color="accent">Agregar al carrito</button>
+
+          <p><mat-icon>shield</mat-icon>Compra protegida, certificado ssl compra 100% segura</p>
+
         </div>
       </div>
     </mat-card>
