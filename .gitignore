@@ -340,3 +340,5 @@ ASALocalRun/
 healthchecksdb
 /Source/eCommerce.Web/Logs
 /Source/eCommerce.Web/Files
+Source/eCommerce.Web/eCommerce.Web/Logs/20210819.json
+*.json
