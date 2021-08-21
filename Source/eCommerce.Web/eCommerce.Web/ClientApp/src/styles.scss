@@ -2,6 +2,7 @@
 
 /* Provide sufficient contrast against white background */
 @import 'styles-variables.scss';
+
 a {
   color: #0366d6;
 }
@@ -29,6 +30,10 @@ body, html {
   background: $body;
   color: $body-text;
   /*scrollbar-color: yellow blue;*/
+}
+
+.margin-container {
+  margin-top: 3%;
 }
 
 .grid {

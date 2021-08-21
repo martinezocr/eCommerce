@@ -1,25 +1,32 @@
+@import "./src/styles-variables";
+
 mat-toolbar {
   background: #000;
   color: #fff;
-  margin-bottom: 3%;
+  display: flex;
+  justify-content:center;
+  max-height: 100px!important;
+
   .space-between {
     flex: 1 1 auto;
   }
 }
 
 footer {
-  background-color: #ddd;
+  background-color: $color-footer-background;
   border-top: 1px solid #bbb;
   text-align: center;
   height: 100%;
   margin-top: 3%;
-  padding-bottom: 3%;
-  display:flex;
-  justify-content:center;
 
   .social-button-container {
     display: flex;
     justify-content: center;
     width: 80px;
+  }
+
+  .byter-footer {
+    background-color: #000;
+    padding-bottom: 3%;
   }
 }

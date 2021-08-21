@@ -1,4 +1,4 @@
-<div class="container" fxLayout="row wrap" fxLayoutAlign="center space-between">
+<div class="margin-container" fxLayout="row wrap" fxLayoutAlign="center space-between">
   <div class="grid">
     <mat-card>
       <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
@@ -23,6 +23,7 @@
             <h2>{{1500 | currency}}</h2>
           </div>
           <div fxLayout="row wrap" fxLayoutAlign="start start">
+            <span fxFlex="100">Disponibles: {{20}}</span>
             <button mat-icon-button>
               <mat-icon>minimize</mat-icon>
             </button>
@@ -36,6 +37,12 @@
 
           <button mat-flat-button color="primary">Comprar</button>
           <button mat-flat-button color="accent">Agregar al carrito</button>
+
+          <mat-icon style="color:yellow">star</mat-icon>
+          <mat-icon style="color:yellow">star</mat-icon>
+          <mat-icon style="color:yellow">star</mat-icon>
+          <mat-icon style="color:yellow">star</mat-icon>
+          <mat-icon style="color:yellow">star</mat-icon>
 
           <p><mat-icon>shield</mat-icon>Compra protegida, certificado ssl compra 100% segura</p>
 

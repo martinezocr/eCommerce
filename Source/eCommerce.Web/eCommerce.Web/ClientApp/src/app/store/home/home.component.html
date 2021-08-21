@@ -1,2 +1,34 @@
-Página de inicio
-<a mat-button [routerLinkActive]="['active']" [routerLink]="['/tienda/productos']"><mat-icon>storefront</mat-icon>&nbsp; Productos</a>
+<app-carousel></app-carousel>
+
+<div class="margin-container" fxLayout="column wrap" fxLayoutAlign="center center" fxLayoutGap="1%">
+  <div class="grid">
+
+    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+      <h2 fxFlex="100">Productos más vendidos</h2>
+      <app-product-item></app-product-item>
+      <app-product-item></app-product-item>
+      <app-product-item></app-product-item>
+      <app-product-item></app-product-item>
+    </div>
+
+    <br />
+    <br />
+
+    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+      <h2 fxFlex="100">Productos más vendidos</h2>
+      <div fxFlex="32" class="card">
+        <img src="https://picsum.photos/200/300" alt="Photo of a Shiba Inu">
+      </div>
+
+      <div fxFlex="32" class="card">
+        <img src="https://picsum.photos/200/300" alt="Photo of a Shiba Inu">
+      </div>
+
+      <div fxFlex="32" class="card">
+        <img src="https://picsum.photos/200/300" alt="Photo of a Shiba Inu">
+      </div>
+
+    </div>
+
+  </div>
+</div>

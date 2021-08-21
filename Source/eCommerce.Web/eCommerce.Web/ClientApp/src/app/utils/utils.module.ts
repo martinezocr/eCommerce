@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 //import { AuMaskDirective } from './au-mask.directive';
 import { SlidePanelComponent } from './slidePanel/slide-panel.component';
 import { FileComponent } from './file/file.component';
+import { CarouselComponent } from './carousel/carousel.component';
 
 @NgModule({
   declarations: [
     SlidePanelComponent,
-    FileComponent
+    FileComponent,
+    CarouselComponent
     //AuMaskDirective
   ],
   imports: [
@@ -15,7 +17,8 @@ import { FileComponent } from './file/file.component';
   ],
   exports: [
     SlidePanelComponent,
-    FileComponent
+    FileComponent,
+    CarouselComponent
     //AuMaskDirective
   ]
 })
