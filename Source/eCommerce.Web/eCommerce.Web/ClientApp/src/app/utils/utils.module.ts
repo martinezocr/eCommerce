@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-//import { AuMaskDirective } from './au-mask.directive';
+import { MaterialModule } from '../material.module';
 import { SlidePanelComponent } from './slidePanel/slide-panel.component';
 import { FileComponent } from './file/file.component';
 import { CarouselComponent } from './carousel/carousel.component';
@@ -9,11 +9,11 @@ import { CarouselComponent } from './carousel/carousel.component';
   declarations: [
     SlidePanelComponent,
     FileComponent,
-    CarouselComponent
-    //AuMaskDirective
+    CarouselComponent,
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MaterialModule
   ],
   exports: [
     SlidePanelComponent,
