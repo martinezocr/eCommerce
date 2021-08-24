@@ -27,7 +27,7 @@
         </mat-menu>
       </ng-container>-->
       <span class="space-between"></span>
-      <button mat-icon-button>
+      <button mat-icon-button [routerLinkActive]="['active']" [routerLink]="['/tienda/carrito']">
         <mat-icon matBadge="2" matBadgeColor="warn">shopping_cart</mat-icon>
       </button>
     </ng-container>
