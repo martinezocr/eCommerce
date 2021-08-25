@@ -15,6 +15,7 @@ import { ProductsComponent } from './products/products.component';
 import { StoreComponent } from './store/store.component'
 import { HomeComponent } from './home/home.component';
 import { CartComponent } from './cart/cart.component'
+import { SummaryItemComponent } from './cart/summary-item/summary-item.component'
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { CartComponent } from './cart/cart.component'
     ProductsComponent,
     StoreComponent,
     HomeComponent,
-    CartComponent
+    CartComponent,
+    SummaryItemComponent
   ],
   imports: [
     CommonModule,
