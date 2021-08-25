@@ -1,4 +1,25 @@
 <div class="cart-item">
-  <p>kjdjfiand ijandijasdniajsdnaijn ian sijdnajidasn</p>
-  <p>kjdjfiand ijandijasdniajsdnaijn ian sijdnajidasnaksn dijasndijasndijans dijansdijansdijanjdiaaksn dkja nsdjan</p>
+  <table>
+    <tbody>
+      <tr fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="1%">
+        <td fxFlex.gt-sm="15" fxFlex.gt-xs="100" fxLayoutAlign="start center">
+          <img src="https://picsum.photos/200" style="width:100px" />
+        </td>
+        <td fxFlex.gt-sm="35" fxFlex.gt-xs="100" fxLayoutAlign="center center">
+          <p>nombre del producto y descripcion del producto a comprar por el cliente</p>
+        </td>
+        <td fxFlex.gt-sm="12" fxFlex.gt-xs="100" fxLayoutAlign="center center">
+          {{1500 | currency}}
+        </td>
+        <td fxFlex.gt-sm="20" fxFlex.gt-xs="100" fxLayoutAlign="center center">
+          <button mat-mini-fab>-</button>
+          &nbsp;&nbsp;{{ 2 }}&nbsp;&nbsp;
+          <button mat-mini-fab>+</button>
+        </td>
+        <td fxFlex.gt-sm="12" fxFlex.gt-xs="100" fxLayoutAlign="center center">
+          <strong>{{3000 | currency}}</strong>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
