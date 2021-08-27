@@ -2,24 +2,16 @@
 <div class="slideshow-container">
 
   <!-- Full-width images with number and caption text -->
-  <div class="fade" [ngClass]="{'show':slideIndex == 1}" style="display:none">
-    <img src="https://i.pinimg.com/originals/d8/80/4f/d8804f454d8041073ec2d883b4e70afb.jpg">
-  </div>
-
-  <div class="fade" [ngClass]="{'show':slideIndex == 2}" style="display:none">
-    <img src="https://i.pinimg.com/originals/54/d5/d3/54d5d31c30a900a2e9b18659c2b7d4f5.jpg">
-  </div>
-
-  <div class="fade" [ngClass]="{'show':slideIndex == 3}" style="display:none">
-    <img src="https://img.wattpad.com/06cfc8e7101b95e749749441372cd76cd349607f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f776174747061642d6d656469612d736572766963652f53746f7279496d6167652f3831774436586e53766c765152673d3d2d3133352e313463386539366531636366646162393834373739363138313331322e676966">
+  <div *ngFor="let image of images; index as i" class="fade" [ngClass]="{'show':slideIndex == i}" style="display:none">
+    <img [src]="image">
   </div>
 
   <!-- Next and previous buttons -->
   <a class="prev" (click)="plusSlides(-1)">&#10094;</a>
   <a class="next" (click)="plusSlides(1)">&#10095;</a>
-</div>
-<div style="text-align:center">
-  <span class="dot" [ngClass]="{'active':slideIndex == 1}" (click)="currentSlide(1)"></span>
-  <span class="dot" [ngClass]="{'active':slideIndex == 2}" (click)="currentSlide(2)"></span>
-  <span class="dot" [ngClass]="{'active':slideIndex == 3}" (click)="currentSlide(3)"></span>
+
+  <div style="text-align:center" class="dots">
+    <span *ngFor="let image of images; index as i" class="dot" [ngClass]="{'active':slideIndex == i}" (click)="currentSlide(i)"></span>
+  </div>
+
 </div>
