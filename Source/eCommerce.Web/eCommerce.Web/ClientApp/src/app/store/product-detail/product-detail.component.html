@@ -19,24 +19,24 @@
         </div>
         <div fxFlex="30">
           <div fxLayout="row wrap" fxLayoutAlign="start start">
-            <h3>Titulo del producto que se está mostrando</h3>
-            <h2>{{1600.25 | currency}}</h2>
+            <h3>{{product.name}}</h3>
+            <h2>{{product.price | currency}}</h2>
           </div>
           <div fxLayout="row wrap" fxLayoutAlign="start start">
             <span fxFlex="100">Disponibles: {{20}}</span>
-            <button mat-icon-button>
+            <button mat-icon-button (click)="decrement()">
               <mat-icon>minimize</mat-icon>
             </button>
             <mat-form-field fxFlex="10">
-              <input matInput>
+              <input matInput name="amount" [(ngModel)]="amount">
             </mat-form-field>
-            <button mat-icon-button>
+            <button mat-icon-button (click)="increment()">
               <mat-icon>add</mat-icon>
             </button>
           </div>
 
           <button mat-flat-button color="primary">Comprar</button>
-          <button mat-flat-button color="accent">Agregar al carrito</button>
+          <button mat-flat-button color="accent" (click)="addToCart()">Agregar al carrito</button>
 
           <mat-icon style="color:yellow">star</mat-icon>
           <mat-icon style="color:yellow">star</mat-icon>

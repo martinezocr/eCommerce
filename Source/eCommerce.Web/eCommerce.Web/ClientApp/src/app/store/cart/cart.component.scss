@@ -1,7 +1,25 @@
+.withoutItems {
+  min-height: 400px;
+}
+
 .cart-resume {
   margin-bottom: 20px;
   /*background: #fff;*/
   border: 1px solid #ddd;
   border-radius: 3px;
   padding: 20px;
+  width: 100% !important;
+
+
+  h5 strong, h3 strong {
+    float: right;
+  }
+}
+
+.cart-coupon {
+  width: 100% !important;
+}
+
+button {
+  width: 100% !important;
 }

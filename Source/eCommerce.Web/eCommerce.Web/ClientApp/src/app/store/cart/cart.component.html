@@ -2,30 +2,38 @@
 
   <div class="grid">
 
-    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+    <div *ngIf="!showCart" class="withoutItems" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+      <div fxFlex="100">
+        <h3>No hay items en el carrito de compras</h3>
+      </div>
+    </div>
+
+
+    <div *ngIf="showCart" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
 
       <div fxFlex.gt-sm="64" fxFlex.gt-xs="100">
-        <app-summary-item></app-summary-item>
-        <app-summary-item></app-summary-item>
-        <app-summary-item></app-summary-item>
-        <app-summary-item></app-summary-item>
+        <app-cart-item *ngFor="let cartItem of cartItems" [cart-item]="cartItem"></app-cart-item>
       </div>
 
       <div fxFlex.gt-sm="34" fxFlex.gt-xs="100">
         <div class="cart-coupon">
-          <mat-form-field>
-            <input matInput placeholder="Cupón descuento">
+          <mat-form-field fxFlex="100" appearance="fill">
+            <input matInput class="newsletter-mail" placeholder="Cupón descuento" autocomplete="off">
+            <mat-icon style="cursor:pointer" matSuffix>arrow_forward</mat-icon>
           </mat-form-field>
-          <button mat-flat-button color="accent">Aplicar</button>
         </div>
         <div class="cart-resume">
           <h2>Resumen de la compra</h2>
           <hr />
-          <h5>Subtotal: <strong>$1500.60</strong></h5>
-          <h3>Total: <strong>$1500.60 </strong></h3>
+          <h5>Subtotal: <strong>{{subtotal | currency}}</strong></h5>
+          <h5>Descuento: <strong>{{totalDiscount | currency}}</strong></h5>
+          <h3>Total: <strong>{{total | currency}}</strong></h3>
         </div>
-        <button mat-flat-button color="primary">Continuar comprando</button>
-        <button mat-flat-button color="accent">Finalizar Comprar</button>
+        <div fxLayout="column wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+          <button fxFlex="100" mat-flat-button color="accent">Continuar comprando</button>
+          <button fxFlex="100" mat-flat-button color="primary">Finalizar Comprar</button>
+        </div>
+
       </div>
 
 

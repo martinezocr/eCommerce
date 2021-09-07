@@ -6,18 +6,21 @@
           <img src="https://picsum.photos/200" style="width:100px" />
         </td>
         <td fxFlex.gt-sm="35" fxFlex.gt-xs="100" fxLayoutAlign="center center">
-          <p>nombre del producto y descripcion del producto a comprar por el cliente</p>
+          <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+            <h4 fxFlex="100">{{cartItem.name}}</h4>
+            <p fxFlex="100">{{cartItem.description}}</p>
+          </div>
         </td>
         <td fxFlex.gt-sm="12" fxFlex.gt-xs="100" fxLayoutAlign="center center">
-          {{1500 | currency}}
+          {{cartItem.price | currency}}
         </td>
         <td fxFlex.gt-sm="20" fxFlex.gt-xs="100" fxLayoutAlign="center center">
-          <button mat-mini-fab>-</button>
-          &nbsp;&nbsp;{{ 2 }}&nbsp;&nbsp;
-          <button mat-mini-fab>+</button>
+          <button mat-mini-fab (click)="decrement()">-</button>
+          &nbsp;&nbsp;{{ cartItem.amount }}&nbsp;&nbsp;
+          <button mat-mini-fab (click)="increment()">+</button>
         </td>
         <td fxFlex.gt-sm="12" fxFlex.gt-xs="100" fxLayoutAlign="center center">
-          <strong>{{3000 | currency}}</strong>
+          <strong>{{cartItem.price * cartItem.amount | currency}}</strong>
         </td>
       </tr>
     </tbody>
