@@ -12,6 +12,8 @@ export class AppComponent {
   constructor(
     private router: Router,
   ) {
+    Settings.ROOT_CONTROLLERS = "/api/";
+
     this.router.events.subscribe((event: Event) => {
       switch (true) {
         case event instanceof NavigationStart: {

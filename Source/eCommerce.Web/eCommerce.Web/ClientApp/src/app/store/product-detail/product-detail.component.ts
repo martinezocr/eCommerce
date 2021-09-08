@@ -18,7 +18,7 @@ export class ProductDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.product = new ProductModel();
-    this.product.name = 'Pelota de futbol N5 para chicos'
+    this.product.title = 'Pelota de futbol N5 para chicos'
     this.product.price = 1545.50;
     this.product.description = "descripción del producto";
     this.product.productId = 1;

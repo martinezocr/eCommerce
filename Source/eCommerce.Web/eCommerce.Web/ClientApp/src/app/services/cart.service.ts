@@ -21,13 +21,19 @@ export class CartService {
     this.API = Settings.ROOT_CONTROLLERS + 'cart/';    
   }
 
-
-  getCart(cartId: string) {
+  /**
+   * obtiene los datos del carrito de compras
+   * @param cartId identificador del carrito de compras
+   */
+  getCart(cartId: string):Promise<void> {
     return this.http.get(this.API + cartId)
       .pipe(
         map((cart: CartModel) => {
           this.cartSource.next(cart);
-        }));
+        }))
+      .toPromise()
+      .then()
+      .catch((err)=>console.log(err));
   }
 
   /**
@@ -35,12 +41,12 @@ export class CartService {
    * @param cart datos del carrito
    */
   saveCart(cart: CartModel) {
-    this.cartSource.next(cart);
-    //return this.http.post(this.API, cart)
-    //  .subscribe((response: CartModel) => {
-    //    // This will update the BehaviorSubject withnew value
-    //    this.cartSource.next(response);
-    //  }, (error) => console.log(error));
+    //this.cartSource.next(cart);
+    return this.http.put(this.API, cart)
+      .subscribe((response: CartModel) => {
+        // This will update the BehaviorSubject withnew value
+        this.cartSource.next(response);
+      }, (error) => console.log(error));
   }
 
   /**obtiene el carrito de compras actual */
@@ -148,7 +154,7 @@ export class CartService {
   private product2CartItem(product:ProductModel):CartItemModel{
     let cartItem = new CartItemModel();
     cartItem.description = product.description;
-    cartItem.name = product.name;
+    cartItem.title = product.title;
     cartItem.price = product.price;
     cartItem.productId = product.productId
     return cartItem;

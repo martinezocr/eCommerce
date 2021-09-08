@@ -9,7 +9,7 @@ export class CartItemModel {
   cartItemId: string;
   productId: number;
   amount: number;
-  name: string;
+  title: string;
   description: string;
   price: number;
   order: number;
