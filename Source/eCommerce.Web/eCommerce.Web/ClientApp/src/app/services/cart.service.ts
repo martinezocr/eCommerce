@@ -41,12 +41,14 @@ export class CartService {
    * @param cart datos del carrito
    */
   saveCart(cart: CartModel) {
-    //this.cartSource.next(cart);
-    return this.http.put(this.API, cart)
-      .subscribe((response: CartModel) => {
-        // This will update the BehaviorSubject withnew value
-        this.cartSource.next(response);
-      }, (error) => console.log(error));
+    this.cartSource.next(cart);
+    // return this.http.put(this.API, cart)
+    //   .subscribe((response: CartModel) => {
+    //     if(!localStorage.getItem('cart_id') || localStorage.getItem('cart_id') == 'new' )
+    //       localStorage.setItem('cart_id',response.cartId);
+    //     // This will update the BehaviorSubject withnew value
+    //     this.cartSource.next(response);
+    //   }, (error) => console.log(error));
   }
 
   /**obtiene el carrito de compras actual */
@@ -146,7 +148,7 @@ export class CartService {
   /**crea un nuevo carrito de compras */
   private createCart(): CartModel {
     const cart = new CartModel();
-    cart.cartId = 'msdl-122a-asd1-asda-a5s4-kams';
+    cart.cartId = 'new';
     localStorage.setItem('cart_id', cart.cartId);
     return cart;
   }

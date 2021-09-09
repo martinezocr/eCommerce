@@ -3,7 +3,7 @@
     <mat-card>
       <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
 
-        <div fxFlex="65">
+        <div fxFlex.gt-sm="65" fxFlex.gt-xs="100">
           <div class="image-principal-container" fxLayoutAlign="center center">
             <img class="image-principal" src="https://http2.mlstatic.com/D_NQ_NP_911295-MLA45105654632_032021-O.webp" />
           </div>
@@ -17,13 +17,13 @@
             </p>
           </div>
         </div>
-        <div fxFlex="30">
-          <div fxLayout="row wrap" fxLayoutAlign="start start">
+        <div fxFlex.gt-sm="30" fxFlex.gt-xs="100">
+          <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutAlign.xs="center center">
             <h3>{{product.title}}</h3>
             <h2>{{product.price | currency}}</h2>
           </div>
-          <div fxLayout="row wrap" fxLayoutAlign="start start">
-            <span fxFlex="100">Disponibles: {{20}}</span>
+          <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutAlign.xs="center center">
+            <span fxFlex.gt-sm="100">Disponibles: {{20}}</span>
             <button mat-icon-button (click)="decrement()">
               <mat-icon>minimize</mat-icon>
             </button>
@@ -35,23 +35,29 @@
             </button>
           </div>
 
-          <button mat-flat-button color="primary">Comprar</button>
-          <button mat-flat-button color="accent" (click)="addToCart()">Agregar al carrito</button>
-
-          <mat-icon style="color:yellow">star</mat-icon>
-          <mat-icon style="color:yellow">star</mat-icon>
-          <mat-icon style="color:yellow">star</mat-icon>
-          <mat-icon style="color:yellow">star</mat-icon>
-          <mat-icon style="color:yellow">star</mat-icon>
-
-          <p><mat-icon>shield</mat-icon>Compra protegida, certificado ssl compra 100% segura</p>
+          <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutAlign.xs="center center">
+            <button mat-flat-button fxFlex="100" color="primary">Comprar</button>
+            <button mat-flat-button fxFlex="100" color="accent" (click)="addToCart()">Agregar al carrito</button>
+  
+            <div fxFlex="100">
+              <mat-icon style="color:yellow">star</mat-icon>
+              <mat-icon style="color:yellow">star</mat-icon>
+              <mat-icon style="color:yellow">star</mat-icon>
+              <mat-icon style="color:yellow">star</mat-icon>
+              <mat-icon style="color:yellow">star</mat-icon>
+            </div>
+  
+            <p><mat-icon>shield</mat-icon>Compra protegida, certificado ssl compra 100% segura</p>  
+          </div>
+          
 
         </div>
       </div>
     </mat-card>
 
     <br />
-    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%" 
+        fxLayoutAlign.xs="space-between center" fxLayout.xs="column wrap">
       <h2 fxFlex="100">Productos relacionados</h2>
       <app-product-item></app-product-item>
       <app-product-item></app-product-item>
