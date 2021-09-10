@@ -1,4 +1,6 @@
-﻿namespace eCommerce.Web.Models
+﻿using System;
+
+namespace eCommerce.Web.Models
 {
     /// <summary>
     /// Entidad para la representación del carrito de compras
@@ -8,7 +10,7 @@
         /// <summary>
         /// Identificador del usuario
         /// </summary>
-        public string CartId { get; set; }
+        public Guid? CartId { get; set; }
         
         /// <summary>
         /// items del carrito
@@ -24,7 +26,11 @@
         /// <summary>
         /// identificador del item
         /// </summary>
-        public int CartItemId { get; set; }
+        public int? CartItemId { get; set; }
+        /// <summary>
+        /// identificador del carrito de compras
+        /// </summary>
+        public Guid CartId { get; set; }
         /// <summary>
         /// identificador del producto
         /// </summary>
@@ -32,11 +38,11 @@
         /// <summary>
         /// cantidad de items seleccionados a comprar
         /// </summary>
-        public int Amount { get; set; }
+        public byte Amount { get; set; }
         /// <summary>
         /// nombre/titulo del producto
         /// </summary>
-        public string Name { get; set; }
+        public string Title { get; set; }
         /// <summary>
         /// Descripción del producto
         /// </summary>

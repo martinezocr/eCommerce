@@ -23,6 +23,10 @@
         /// path donde se van a guardar los archivos
         /// </summary>
         public const string FOLDER_FILE = "Files";
+        /// <summary>
+        /// tiempo de expiración del carrito de compras
+        /// </summary>
+        public const int CART_EXPIRATION_DAYS = 5;
 
     }
 }

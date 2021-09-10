@@ -18,14 +18,14 @@ export class CartService {
   // similar to async pipe
   public readonly cart$: Observable<CartModel> = this.cartSource.asObservable();
   constructor(private http: HttpClient) {
-    this.API = Settings.ROOT_CONTROLLERS + 'cart/';    
+    this.API = Settings.ROOT_CONTROLLERS + 'cart/';
   }
 
   /**
    * obtiene los datos del carrito de compras
    * @param cartId identificador del carrito de compras
    */
-  getCart(cartId: string):Promise<void> {
+  getCart(cartId: string): Promise<void> {
     return this.http.get(this.API + cartId)
       .pipe(
         map((cart: CartModel) => {
@@ -33,7 +33,7 @@ export class CartService {
         }))
       .toPromise()
       .then()
-      .catch((err)=>console.log(err));
+      .catch((err) => console.log(err));
   }
 
   /**
@@ -41,14 +41,16 @@ export class CartService {
    * @param cart datos del carrito
    */
   saveCart(cart: CartModel) {
-    this.cartSource.next(cart);
-    // return this.http.put(this.API, cart)
-    //   .subscribe((response: CartModel) => {
-    //     if(!localStorage.getItem('cart_id') || localStorage.getItem('cart_id') == 'new' )
-    //       localStorage.setItem('cart_id',response.cartId);
-    //     // This will update the BehaviorSubject withnew value
-    //     this.cartSource.next(response);
-    //   }, (error) => console.log(error));
+    return this.http.put<CartModel>(this.API, cart)
+      .toPromise()
+      .then(res => {
+        console.log(res);
+        if (!localStorage.getItem('cart_id') || localStorage.getItem('cart_id') == '')
+          localStorage.setItem('cart_id', res.cartId);
+        // This will update the BehaviorSubject withnew value
+        this.cartSource.next(res);
+      })
+      .catch((err) => console.log(err));
   }
 
   /**obtiene el carrito de compras actual */
@@ -62,7 +64,7 @@ export class CartService {
    * @param amount cantidad a agregar
    */
   addItemToCart(item: ProductModel, amount = 1) {
-    if(amount < 1)
+    if (amount < 1)
       return;
     const itemToAdd = this.product2CartItem(item)
     const cart = this.getCurrentCartValue() ?? this.createCart();
@@ -81,10 +83,10 @@ export class CartService {
     this.saveCart(cart);
   }
 
-/**
- * decrementa la cantidad de un item/producto
- * @param item item seleccionado
- */
+  /**
+   * decrementa la cantidad de un item/producto
+   * @param item item seleccionado
+   */
   decrementItemQuantity(item: CartItemModel) {
     const cart = this.getCurrentCartValue();
     const foundItemIndex = cart.cartItems.findIndex(x => x.cartItemId === item.cartItemId);
@@ -117,14 +119,14 @@ export class CartService {
    * @param cartId identificador del carrito
    */
   deleteCart(cartId: string) {
-    this.cartSource.next(null);
-      localStorage.removeItem('cart_id');
-    // return this.http.delete(this.API + cartId).subscribe(() => {
-    //   this.cartSource.next(null);
-    //   localStorage.removeItem('cart_id');
-    // }, error => {
-    //   console.log(error);
-    // });
+    return this.http.delete(this.API + cartId).subscribe((res: boolean) => {
+      if (res) {
+        this.cartSource.next(null);
+        localStorage.removeItem('cart_id');
+      }
+    }, error => {
+      console.log(error);
+    });
   }
 
   /**
@@ -148,12 +150,10 @@ export class CartService {
   /**crea un nuevo carrito de compras */
   private createCart(): CartModel {
     const cart = new CartModel();
-    cart.cartId = 'new';
-    localStorage.setItem('cart_id', cart.cartId);
     return cart;
   }
 
-  private product2CartItem(product:ProductModel):CartItemModel{
+  private product2CartItem(product: ProductModel): CartItemModel {
     let cartItem = new CartItemModel();
     cartItem.description = product.description;
     cartItem.title = product.title;

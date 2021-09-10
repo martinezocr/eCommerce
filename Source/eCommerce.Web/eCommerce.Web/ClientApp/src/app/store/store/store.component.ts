@@ -17,10 +17,10 @@ export class StoreComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const cartId = localStorage.getItem('cart_id');
-    if (cartId)
+    if (cartId && cartId != '')
       this.cartService.getCart(cartId)
-      .then()
-      .catch(()=>"Erro al cargar carrito");
+        .then()
+        .catch(() => "Erro al cargar carrito");
 
     //obtengo la cantidad de items del carrito para setear el badge
     this.subs = this.cartService.cart$.subscribe(cart => {
