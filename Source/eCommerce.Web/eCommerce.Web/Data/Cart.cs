@@ -66,7 +66,7 @@ namespace eCommerce.Web.Data
                 await cmd.CommitAsync();
                 return data.CartId.Value;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await cmd.RollbackAsync();
                 throw;
@@ -103,7 +103,7 @@ namespace eCommerce.Web.Data
             cmd.Parameters.Add("@CartId", SqlDbType.UniqueIdentifier).Value = cartId;
 
             var cartItems = new List<CartItemModel>();
-            using var reader = cmd.ExecuteReader();
+            using var reader = await cmd.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
             {

@@ -32,7 +32,7 @@ namespace eCommerce.Web.Controllers
                 var cartId = await Data.Cart.SaveAsync(cart);
                 return await Data.Cart.GetByIdAsync(cartId);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -42,7 +42,7 @@ namespace eCommerce.Web.Controllers
         /// genera la descargar del excel
         /// </summary>
         /// <returns></returns>
-        [HttpGet("{cartId:guid}")]
+        [HttpGet("{cartId}")]
         public async Task<CartModel> GetAsync(Guid cartId)
         {
             return await Data.Cart.GetByIdAsync(cartId);

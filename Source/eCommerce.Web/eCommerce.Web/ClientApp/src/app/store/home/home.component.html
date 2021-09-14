@@ -3,7 +3,8 @@
 <div class="margin-container" fxLayout="column wrap" fxLayoutAlign="center center" fxLayoutGap="1%">
   <div class="grid">
 
-    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%"
+    fxLayoutAlign.xs="space-between center" fxLayout.xs="column wrap">
       <h2 fxFlex="100">Productos más vendidos</h2>
       <app-product-item></app-product-item>
       <app-product-item></app-product-item>
@@ -14,17 +15,18 @@
     <br />
     <br />
 
-    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%"
+    fxLayoutAlign.xs="space-between center" fxLayout.xs="column wrap">
       <h2 fxFlex="100">Productos más vendidos</h2>
-      <div fxFlex="32" class="card">
+      <div fxFlex.gt.sm="32" fxFlex.gt.xs="100" class="card">
         <img src="https://picsum.photos/200/300" alt="Photo of a Shiba Inu">
       </div>
 
-      <div fxFlex="32" class="card">
+      <div fxFlex.gt.sm="32" fxFlex.gt.xs="100" class="card">
         <img src="https://picsum.photos/200/300" alt="Photo of a Shiba Inu">
       </div>
 
-      <div fxFlex="32" class="card">
+      <div fxFlex.gt.sm="32" fxFlex.gt.xs="100" class="card">
         <img src="https://picsum.photos/200/300" alt="Photo of a Shiba Inu">
       </div>
 

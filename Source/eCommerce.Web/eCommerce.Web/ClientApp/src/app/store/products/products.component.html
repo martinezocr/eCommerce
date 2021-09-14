@@ -3,13 +3,13 @@
   <div class="grid">
 
     <div class="search" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
-      <mat-form-field fxFlex="70">
+      <mat-form-field fxFlex.gt-sm="70" fxFlex.gt-xs="100">
         <input matInput placeholder="Buscar">
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
 
       <mat-form-field>
-        <mat-select placeholder="Ordernar por" fxFlex [(ngModel)]="this.filters.orderBy">
+        <mat-select placeholder="Ordernar por" fxFlex.gt-sm="70" fxFlex.gt-xs="100" [(ngModel)]="this.filters.orderBy">
           <mat-option [value]="1">Más relevante</mat-option>
           <mat-option [value]="2">Menor precio</mat-option>
           <mat-option [value]="3">Mayor precio</mat-option>
@@ -22,7 +22,8 @@
 
     <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
 
-      <div fxFlex="25" class="filters" fxLayout="column wrap">
+      <div fxFlex.gt-sm="25" fxFlex.gt-xs="100" class="filters" fxLayout="column wrap"
+      fxLayout.xs="row wrap" fxLayoutAlign.xs="space-between">
         <mat-form-field>
           <mat-select placeholder="Categorías" multiple>
             <mat-option [value]="1">Zapatillas</mat-option>
@@ -40,7 +41,7 @@
         </mat-form-field>
       </div>
 
-      <div fxFlex="70">
+      <div fxFlex.gt-sm="70" fxFlex.gt-xs="100">
         <mat-card>
           <div fxLayout="row wrap" fxLayoutAlign="center center">
             <app-product-item></app-product-item>

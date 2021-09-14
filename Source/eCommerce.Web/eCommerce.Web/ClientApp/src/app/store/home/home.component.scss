@@ -7,3 +7,11 @@
     max-height: 250px;
   }
 }
+
+
+@media (max-width: 600px) {
+  .card{
+    width: 98%;
+    margin: 15px;
+  }
+}
