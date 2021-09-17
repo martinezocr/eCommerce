@@ -120,7 +120,7 @@ export class UserService {
     return this.http.get<MyUserModel>(Settings.ROOT_CONTROLLERS + 'user')
       .toPromise()
       .then(res => {
-        if (res === null || ((res.userId === null || res.userId === 0) && (res.competitorId === null || res.competitorId === 0))) {
+        if (res === null || ((res.userId === null || res.userId === 0))) {
           this.myUser = null;
           this.myName = null;
           sessionStorage.removeItem('user');

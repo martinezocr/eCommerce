@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AdminComponent } from './admin/admin.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { StoreComponent } from './store/store/store.component';
 
@@ -16,6 +17,7 @@ const routes: Routes = [
   },
   {
     path: 'administrador',
+    component: AdminComponent,
     loadChildren: () => import('./admin/admin.module').then(mod => mod.AdminModule),
   },
   //{

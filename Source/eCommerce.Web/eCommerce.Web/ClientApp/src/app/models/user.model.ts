@@ -50,10 +50,6 @@ export class MyUserModel {
   username: string;
   /**Identificador del usuario*/
   userId: number;
-  /**Identificador del equipo*/
-  competitorId: number;
-  /**Color del equipo*/
-  competitorColor: ColorModel;
   /**Nombre del usuario*/
   name: string;
   /**Nombre del usuario*/

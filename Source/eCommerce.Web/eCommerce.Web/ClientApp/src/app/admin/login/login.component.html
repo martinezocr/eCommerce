@@ -1,28 +1,31 @@
-<form [formGroup]="loginForm" class="flex login" *ngIf="showLogin">
-  <mat-card>
-    <h3 align="center">
-      <img src="assets/logo2.svg">
-    </h3>
-    <mat-divider></mat-divider>
-    <p>
-      <mat-form-field appearance="legacy">
-        <mat-label>Email</mat-label>
-        <input matInput autofocus formControlName="username" (keyup.enter)="auth()">
-        <mat-icon matSuffix>person</mat-icon>
-      </mat-form-field>
-    </p>
-    <p>
-      <mat-form-field appearance="legacy">
-        <mat-label>Contraseña</mat-label>
-        <input matInput type="password" formControlName="password" (keyup.enter)="auth()">
-        <mat-icon matSuffix>lock</mat-icon>
-      </mat-form-field>
-    </p>
-    <div align="center" class="remind">
-      <mat-slide-toggle #rememberMe class="example-margin">Recordarme</mat-slide-toggle>
-    </div>
-    <div align="center" class="btn">
-      <button class="btn_log" style="margin-right: 0;" mat-raised-button (click)="auth()" [disabled]="loginForm.disabled" type="button">Ingresar</button>
-    </div>
-  </mat-card>
-</form>
+<div class="loginContainer">
+  <form [formGroup]="loginForm" class="flex login" *ngIf="showLogin">
+    <mat-card>
+      <h3 align="center">
+        <!--<img src="assets/logo2.svg">-->
+        Ingreso
+      </h3>
+      <mat-divider></mat-divider>
+      <p>
+        <mat-form-field appearance="legacy">
+          <mat-label>Email</mat-label>
+          <input matInput autofocus formControlName="username" (keyup.enter)="auth()">
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field appearance="legacy">
+          <mat-label>Contraseña</mat-label>
+          <input matInput type="password" formControlName="password" (keyup.enter)="auth()">
+          <mat-icon matSuffix>lock</mat-icon>
+        </mat-form-field>
+      </p>
+      <div align="center" class="remind">
+        <mat-slide-toggle #rememberMe class="example-margin">Recordarme</mat-slide-toggle>
+      </div>
+      <div align="center" class="btn">
+        <button class="btn_log" style="margin-right: 0;" mat-raised-button (click)="auth()" [disabled]="loginForm.disabled" type="button">Ingresar</button>
+      </div>
+    </mat-card>
+  </form>
+</div>
