@@ -20,7 +20,7 @@ import { UserDialog } from './user.dialog';
 })
 export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  displayedColumns: string[] = ['username', 'enterprise', 'isActive', 'tools'];
+  displayedColumns: string[] = ['username', 'firstName','lastName', 'isActive', 'tools'];
 
   resultsLength = 0;
   isLoadingResults = true;

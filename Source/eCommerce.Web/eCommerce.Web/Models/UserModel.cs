@@ -15,13 +15,13 @@
         /// </summary>
         public string Username { get; set; }
         /// <summary>
-        /// email
+        /// Nombre del usuario
         /// </summary>
-        public string Email { get; set; }
+        public string FirstName { get; set; }
         /// <summary>
-        /// identificador de la empresa asociada al usuario
+        /// Apellido del usuario
         /// </summary>
-        public int? EnterpriseId { get; set; }
+        public string LastName { get; set; }
 
         /// <summary>
         /// Estado del usuario

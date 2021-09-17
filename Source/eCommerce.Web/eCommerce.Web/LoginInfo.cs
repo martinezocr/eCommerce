@@ -78,7 +78,7 @@ namespace eCommerce.Web
                 Name = objData["FullName"] as string,
                 FirstName = objData.IsNull("FirstName") ? null : objData["FirstName"] as string,
                 UserId = (int)objData["UserId"],
-                RoleIds = Data.User.GetRoles((int)objData["UserId"]),
+                RoleIds = await Data.User.GetRolesAsync((int)objData["UserId"]),
                 Persist = createPersistentCookie
             };
 

@@ -18,7 +18,6 @@ export class AdminComponent {
   title = Settings.TITLE;
 
   constructor(
-    @Inject(LOCALE_ID) public locale: string,
     private titleService: Title,
     private dialog: MatDialog,
     public userService: UserService,
@@ -30,7 +29,7 @@ export class AdminComponent {
     this.userService.updateUserFromServer()
       .then(ok => {
         if (!ok)
-          this.router.navigate(['/admin/ingreso']);
+          this.router.navigate(['/administrador/ingreso']);
       });
   }
 
@@ -44,7 +43,7 @@ export class AdminComponent {
   /**Deslogeo del usuario */
   logout(): void {
     this.userService.logout()
-      .then(() => this.router.navigate(['/admin/ingreso']))
+      .then(() => this.router.navigate(['/administrador/ingreso']))
       .catch(() => this.snackBar.open(Settings.ERROR_COMM));
   }
 }

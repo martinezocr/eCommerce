@@ -1,35 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserModel, UserFilter, UserFields, MyUserModel, UserRole } from '../models/user.model';
 import { ResponseDataModel, QueryDataModel } from '../models/api.model';
-
-export enum SaveResult {
-  /**todo bien */
-  ok = 0,
-  /**la pregunta requiere al menos dos respuestas */
-  usernameExists = -1,
-}
-
-export enum ValidateResult {
-  /**todo bien */
-  ok = 1,
-  /**el usuario no existe */
-  notExists = 0,
-  /**el usuario esta bloqueado */
-  isLocked = -1,
-}
-
+import { Settings } from '../app.settings';
 
 /**Clase para el manejo de los usuarios */
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-
+  API: string;
   public myUser: MyUserModel = null;
-  /*public myName: string = null;*/
+  public myName: string = null;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    @Inject(LOCALE_ID) public locale: string,
+    private http: HttpClient
+  ) {
+    this.API = Settings.ROOT_CONTROLLERS + 'user/';
   }
 
   /**
@@ -50,7 +38,7 @@ export class UserService {
     data.order = order;
     data.orderAsc = orderAsc;
 
-    return this.http.post<ResponseDataModel<UserModel>>('/api/user/list', data)
+    return this.http.post<ResponseDataModel<UserModel>>(this.API + 'list', data)
       .toPromise()
       .then(data => {
         data.draw = draw;
@@ -59,10 +47,10 @@ export class UserService {
   }
 
   /**
-  * Devuelve la lista de usuarios
-  */
+   * Devuelve la lista de usuarios
+   */
   listAll(): Promise<UserModel[]> {
-    return this.http.get<UserModel[]>('/api/user/all')
+    return this.http.get<UserModel[]>(this.API + 'all')
       .toPromise();
   }
 
@@ -71,7 +59,7 @@ export class UserService {
    * @param userId Identificador del usuario
    */
   delete(userId: number): Promise<boolean> {
-    return this.http.delete<boolean>('/api/user/' + userId)
+    return this.http.delete<boolean>(this.API + userId)
       .toPromise();
   }
 
@@ -80,47 +68,66 @@ export class UserService {
    * @param username Nombre del usuario
    * @param password Contraseña del usuario
    */
-  auth(username: string, password: string, remember: boolean): Promise<ValidateResult> {
-    return this.http.post<any>('/api/user/auth', { username: username, password: password, remember: remember })
+  auth(username: string, password: string, remember: boolean) {
+    return this.http.post<MyUserModel>(this.API + 'auth', { username: username, password: password, remember: remember })
       .toPromise()
       .then(res => {
         if (res === null)
-          return ValidateResult.notExists;
-        if (res.isLocked == true)
-          return ValidateResult.isLocked;
+          return false;
         this.myUser = res;
-        //this.myName = this.myUser.firstName;
+        this.myName = this.myUser.firstName;
         sessionStorage.setItem('user', JSON.stringify(res));
-        return ValidateResult.ok;
+        return true;
       });
   }
 
   /**
-  * Verifica si el usuario está logeado
-  */
+   * Autentica a un cliente
+   * @param tournamentId Torneo
+   * @param colorId Color
+   * @param password Contraseña
+   */
+  //authCompetitor(tournamentId: number, colorId: number, password: string) {
+  //  return this.http.post<MyUserModel>(Settings.ROOT_CONTROLLERS + 'competitor/auth', { tournamentId: tournamentId, colorId: colorId, password: password })
+  //    .toPromise()
+  //    .then(res => {
+  //      if (res === null)
+  //        return false;
+  //      this.myUser = res;
+  //      this.myName = null;
+  //      sessionStorage.setItem('user', JSON.stringify(res));
+  //      //this.signalRService.open();
+  //      return true;
+  //    });
+  //}
+
+  /**
+   * Verifica si el usuario está logeado
+   */
   updateUser() {
     const json = sessionStorage.getItem('user');
     if (json !== null) {
       this.myUser = JSON.parse(json);
-      //if (this.myUser !== null && this.myUser.userId !== null || this.myUser.userId !== 0)
-      //this.myName = this.myUser.firstName;
+      if (this.myUser !== null && this.myUser.userId !== null || this.myUser.userId !== 0)
+        this.myName = this.myUser.firstName;
     }
   }
 
   /**
-  * Verifica si el usuario está logeado pidiendo los datos al servidor
-  */
+   * Verifica si el usuario está logeado pidiendo los datos al servidor
+   */
   updateUserFromServer(): Promise<boolean> {
-    return this.http.get<any>('/api/user')
+    return this.http.get<MyUserModel>(Settings.ROOT_CONTROLLERS + 'user')
       .toPromise()
       .then(res => {
-        if (res === null || res.userId === null || res.userId === 0) {
+        if (res === null || ((res.userId === null || res.userId === 0) && (res.competitorId === null || res.competitorId === 0))) {
           this.myUser = null;
-          //this.myName = null;
+          this.myName = null;
+          sessionStorage.removeItem('user');
           return false;
         }
         this.myUser = res;
-        //this.myName = this.myUser.firstName;
+        this.myName = this.myUser.firstName;
         sessionStorage.setItem('user', JSON.stringify(res));
         return true;
       });
@@ -130,8 +137,9 @@ export class UserService {
   logout(): Promise<null> {
     sessionStorage.removeItem('user');
     this.myUser = null;
-    //this.myName = null;
-    return this.http.get<null>('/api/user/logout').toPromise();
+    this.myName = null;
+    //this.signalRService.close();
+    return this.http.get<null>(this.API + 'logout').toPromise();
   }
 
   /**
@@ -147,6 +155,11 @@ export class UserService {
     return false;
   }
 
+  /**Devuelve si un usuario posee algún rol */
+  hasSomeRole(): boolean {
+    return this.myUser !== null && this.myUser.roleIds !== null && this.myUser.roleIds.length > 0;
+  }
+
   /**Devuelve si el usuario está logeado */
   isLoggedIn(): boolean {
     if (this.myUser !== null)
@@ -156,21 +169,21 @@ export class UserService {
   }
 
   /**
- * Devuelve los datos de un usuario
- * @param userId Identificador del usuario
- */
+   * Devuelve los datos de un usuario
+   * @param userId Identificador del usuario
+   */
   get(userId: number): Promise<UserModel> {
-    return this.http.get<UserModel>('/api/user/' + userId)
+    return this.http.get<UserModel>(this.API + userId)
       .toPromise()
       .then(res => res as UserModel);
   }
 
   /**
- * Graba los datos de un usuario
- * @param data Datos a guardar
- */
+   * Graba los datos de un usuario
+   * @param data Datos a guardar
+   */
   save(data: UserModel): Promise<boolean> {
-    return this.http.put<boolean>('/api/user', data)
+    return this.http.put<boolean>(this.API, data)
       .toPromise();
   }
 
@@ -179,8 +192,7 @@ export class UserService {
    * @param data Contraseña actual y nueva
    */
   changePassword(data: any): Promise<null> {
-    return this.http.post<null>('/api/user/password', data)
+    return this.http.post<null>(this.API + 'password', data)
       .toPromise();
   }
-
 }

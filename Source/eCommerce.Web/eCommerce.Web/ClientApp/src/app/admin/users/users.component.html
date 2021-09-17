@@ -2,86 +2,77 @@
   <!--mat-elevation-z8-->
   <mat-card class="capture-card">
     <div class="flex titles valign-wrapper">
-      <i class="material-icons">manage_accounts</i><h2>Usuarios</h2>
+      <i class="material-icons">people</i><h2>Usuarios</h2>
       <mat-divider></mat-divider>
     </div>
 
     <div class="loading-shade"
          *ngIf="isLoadingResults || hasError">
       <mat-spinner *ngIf="isLoadingResults && !hasError"></mat-spinner>
-      <div *ngIf="hasError" class="error mat-typography">
-        Ha ocurrido un error
-        <div class="retry-grid" (click)="refresh.emit()"><mat-icon matSuffix>refresh</mat-icon>reintentar</div>
-      </div>
+      <div *ngIf="hasError" class="error mat-typography" >Ha ocurrido un error</div>
     </div>
 
     <div class="filters">
       <form #filterForm="ngForm" class="flex" align="space-between" flex-wrap="wrap">
-        <mat-form-field fxFlex="89">
+        <mat-form-field class="col12">
           <input matInput placeholder="Buscar" name="filter" [(ngModel)]="this.filter.freeText">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
-        <button fxFlex="9" mat-button color="primary" (click)="download()">
-          Descargar Excel &nbsp;
-          <mat-icon matSuffix>cloud_download</mat-icon>
-        </button>
       </form>
     </div>
 
-    <div class="table-container no-scrollx">
-      <div class="row_scrollX">
-        <table mat-table matSort [dataSource]="data" matSortActive="username" matSortDirection="asc" matSortDisableClear>
-          <ng-container matColumnDef="username">
-            <th mat-header-cell *matHeaderCellDef>
-              <div mat-sort-header>
-                Usuario/Login
+    <div class="table-container">
+      <table mat-table matSort [dataSource]="data" matSortActive="username" matSortDirection="asc" matSortDisableClear>
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef>
+            <div mat-sort-header >Email</div>
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header >Nombre</th>
+          <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header >Apellido</th>
+          <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="isActive">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header >Activo</th>
+          <td mat-cell *matCellDef="let element">
+            <i *ngIf="element.isActive" class="material-icons">check_circle</i>
+            <i *ngIf="!element.isActive" class="material-icons">cancel</i>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tools" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef>
+            <button mat-icon-button matTooltip="Crear" (click)="edit()" >
+              <mat-icon>person_add</mat-icon>
+            </button>
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div id="respons_opc">
+              <div class="cont_act_menu">
+                <button mat-icon-button matTooltip="Eliminar" (click)="delete(element)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Editar" (click)="edit(element.userId)">
+                  <mat-icon>edit</mat-icon>
+                </button>
               </div>
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.username}} </td>
-          </ng-container>
+            </div>
+          </td>
+        </ng-container>
 
-          <ng-container matColumnDef="enterprise">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Empresa </th>
-            <td mat-cell *matCellDef="let element"> {{element.enterprise}} </td>
-          </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
 
-          <ng-container matColumnDef="isActive">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Activo</th>
-            <td mat-cell *matCellDef="let element">
-              <i *ngIf="element.isActive" class="material-icons">check_circle</i>
-              <i *ngIf="!element.isActive" class="material-icons">cancel</i>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="tools" stickyEnd>
-            <th mat-header-cell *matHeaderCellDef>
-              <button mat-icon-button matTooltip="Crear" (click)="edit()">
-                <mat-icon>person_add</mat-icon>
-              </button>
-            </th>
-            <td mat-cell *matCellDef="let element" style="width: 120px">
-              <div id="respons_opc">
-                <div class="cont_act_menu">
-                  <button mat-icon-button matTooltip="Eliminar" (click)="delete(element)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                  <button mat-icon-button matTooltip="Editar" (click)="edit(element.userId)">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                </div>
-              </div>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </div>
-
-      <div>
       <mat-paginator [length]="resultsLength"></mat-paginator>
-      </div>
-      
     </div>
   </mat-card>
 </div>

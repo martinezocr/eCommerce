@@ -1,9 +1,10 @@
-﻿using CustomSqlClient.Net.Core;
-using eCommerce.Web.Models;
+﻿using eCommerce.Web.Models;
+using CustomSqlClient.Net.Core;
 using System;
 using System.Data;
 using System.Linq;
 using System.Security;
+using System.Threading.Tasks;
 
 namespace eCommerce.Web.Data
 {
@@ -12,25 +13,6 @@ namespace eCommerce.Web.Data
     /// </summary>
     public static class User
     {
-        /// <summary>
-        /// enumerador para los resultados de la validación para la autenticación
-        /// </summary>
-        public enum ValidateResult : int
-        {
-            /// <summary>
-            /// el usuario no existe
-            /// </summary>
-            NotExists = 0,
-            /// <summary>
-            /// el usuario está desactivado
-            /// </summary>
-            IsLocked = -1,
-            /// <summary>
-            /// todo bien
-            /// </summary>
-            Ok = 1
-        }
-
         #region Consulta
 
         /// <summary>
@@ -40,8 +22,10 @@ namespace eCommerce.Web.Data
         {
             UserId = 0,
             Username = 1,
-            IsActive = 2,
-            LoggedOn = 3
+            FirstName = 2,
+            LastName = 3,
+            IsActive = 4,
+            LoggedOn = 5
         }
 
         /// <summary>
@@ -55,6 +39,19 @@ namespace eCommerce.Web.Data
             /// </summary>
             public string Username { get; set; }
 
+            /// <summary>
+            /// Filtro para el campo "FirstName"
+            /// </summary>
+            public string FirstName { get; set; }
+
+            /// <summary>
+            /// Filtro para el campo "LastName"
+            /// </summary>
+            public string LastName { get; set; }
+
+            /// <summary>
+            /// Filtro para el campo "IsActive"
+            /// </summary>
             public bool? IsActive { get; set; }
 
             /// <summary>
@@ -67,28 +64,27 @@ namespace eCommerce.Web.Data
             ";WITH CTE AS" +
             " (" +
                 " SELECT T.[UserId], ROW_NUMBER() OVER(ORDER BY {0} {1}) AS RowNumber" +   //{0} Campo - {1} Orden: ASC/DESC
-                " FROM [User] AS T INNER JOIN Enterprise E ON T.EnterpriseId = E.EnterpriseId" +
-                " WHERE T.UserId > 0 {2}" +   //{2} Filtro (WHERE)
-                                              //" AND not exists(select 1 from [User_Role] UR where UR.UserId = T.UserId and UR.RoleId = 3 ) {2}" +   //{2} Filtro (WHERE)
+                " FROM [User] AS T" +
+                " WHERE T.IsDeleted = 0 {2}" +   //{2} Filtro (WHERE)
             " )";
 
         private const string SELECT_ALL =
             "{0} SELECT " +                                              //{0} - CTE
-                " CTE.[UserId], T.[Username],E.Name as Enterprise, " +
+                " CTE.[UserId], T.[Username], T.[FirstName], T.[LastName]," +
                 " T.[IsActive], T.[LoggedOn]" +
             " FROM CTE" +
-            " INNER JOIN [User] AS T ON T.[UserId] = CTE.[UserId]" +
-            " INNER JOIN Enterprise E ON T.EnterpriseId = E.EnterpriseId ";
+            " INNER JOIN [User] AS T ON T.[UserId] = CTE.[UserId]";
 
         private const string SELECT = SELECT_ALL +
             " WHERE CTE.RowNumber BETWEEN {1} AND {2}";	                //{1} Desde - {2} Hasta
 
         private const string ORDER = " ORDER BY CTE.RowNumber";
-        private const string SELECTCOUNT = "SELECT COUNT(1) AS rows FROM [User] AS T INNER JOIN Enterprise AS E ON T.EnterpriseId = E.EnterpriseId WHERE T.UserId > 0";
+        private const string SELECTCOUNT = "SELECT COUNT(1) AS rows FROM [User] AS T WHERE IsDeleted = 0";
 
         /// <summary>
         /// Obtiene la lista de registros paginada, ordenada y filtrada
         /// </summary>
+        /// <param name="userId">Usuario que genera la consulta</param>
         /// <param name="orderField">Campo de orden</param>
         /// <param name="orderAscendant">Orden ascendente</param>
         /// <param name="from">Registro desde el cual traer los datos (en base cero)</param>
@@ -96,8 +92,11 @@ namespace eCommerce.Web.Data
         /// <param name="filter">Filtros a utilizar</param>
         /// <param name="recordCount">Cantidad de registros encontrados con los filtros establecidos</param>
         /// <returns>Registros obtenidos con los filtros y orden seleccionados</returns>
-        public static DataTable List(Fields? orderField, bool? orderAscendant, Filter filter, int? from, int? length, out int recordCount)
+        public static async Task<(DataTable, int)> ListAsync(int userId, Fields? orderField, bool? orderAscendant, Filter filter, int? from, int? length)
         {
+            if (!await HasRoleAsync(userId, Role.Admin))
+                throw new SecurityException();
+
             if (from.HasValue != length.HasValue)
                 throw new ArgumentOutOfRangeException(nameof(from));
 
@@ -120,6 +119,16 @@ namespace eCommerce.Web.Data
                     strFilter += " AND [Username] LIKE '%' + @Username + '%'";
                     objSqlCmd.Parameters.Add("@Username", SqlDbType.NVarChar, 255).Value = filter.Username;
                 }
+                if (!string.IsNullOrWhiteSpace(filter.FirstName))
+                {
+                    strFilter += " AND [FirstName] LIKE '%' + @FirstName + '%'";
+                    objSqlCmd.Parameters.Add("@FirstName", SqlDbType.NVarChar, 150).Value = filter.FirstName;
+                }
+                if (!string.IsNullOrWhiteSpace(filter.LastName))
+                {
+                    strFilter += " AND [LastName] LIKE '%' + @LastName + '%'";
+                    objSqlCmd.Parameters.Add("@LastName", SqlDbType.NVarChar, 150).Value = filter.LastName;
+                }
                 if (filter.IsActive.HasValue)
                 {
                     strFilter += " AND T.[IsActive] = @IsActive";
@@ -134,6 +143,7 @@ namespace eCommerce.Web.Data
             string strCteWithParams = string.Format(CTE, strOrderField, !orderAscendant.HasValue || orderAscendant.Value ? "ASC" : "DESC", strFilter);
             objSqlCmd.CommandType = CommandType.Text;
 
+            int recordCount = 0;
             if (from.HasValue)
             {
                 string strSelectWithParams = string.Format(SELECT, strCteWithParams, from + 1, from + length) + ORDER;
@@ -142,10 +152,10 @@ namespace eCommerce.Web.Data
 #if DEBUG
                 System.Diagnostics.Trace.WriteLine(objSqlCmd.CommandText);
 #endif
-                DataSet objDS = objSqlCmd.ExecuteDataSet();
+                DataSet objDS = await objSqlCmd.ExecuteDataSetAsync();
                 recordCount = (int)objDS.Tables[0].Rows[0][0];
 
-                return objDS.Tables[1];
+                return (objDS.Tables[1], recordCount);
             }
             else
             {
@@ -155,7 +165,7 @@ namespace eCommerce.Web.Data
 #if DEBUG
                 System.Diagnostics.Trace.WriteLine(strSelectWithParams);
 #endif
-                return objSqlCmd.ExecuteDataTable();
+                return (await objSqlCmd.ExecuteDataTableAsync(), recordCount);
             }
         }
 
@@ -166,12 +176,14 @@ namespace eCommerce.Web.Data
         /// <summary>
         /// Devuelve los datos de un usuario
         /// </summary>
+        /// <param name="editorUserId">Usuario administrador que realiza la acción</param>
         /// <param name="userId">Identificador del usuario</param>
         /// <returns>Datos del usuario</returns>
-        public static DataRow Get(int userId)
+        public static DataRow Get(int editorUserId, int userId)
         {
             using var objCmd = new SqlCommand("User_Get", CommandType.StoredProcedure);
-            objCmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+            objCmd.Parameters.Add("@EditorUserId", SqlDbType.Int).Value = editorUserId;
+            objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
             return objCmd.ExecuteDataRow();
         }
 
@@ -192,11 +204,23 @@ namespace eCommerce.Web.Data
         /// </summary>
         /// <param name="username">Usuario</param>
         /// <returns>Rol del suario</returns>
-        public static string[] GetRoles(string username)
+        public static async Task<string[]> GetRolesAsync(string username)
         {
             using var objCmd = new SqlCommand("User_GetRoles", CommandType.StoredProcedure);
             objCmd.Parameters.Add("@username", SqlDbType.NVarChar, 255).Value = username;
-            return objCmd.ExecuteArrayString();
+            return await objCmd.ExecuteArrayStringAsync();
+        }
+
+        /// <summary>
+        /// Devuelve los roles de un usuario
+        /// </summary>
+        /// <param name="userId">Identificador del suario</param>
+        /// <returns>Roles del suario</returns>
+        public static async Task<Role[]> GetRolesAsync(int userId)
+        {
+            using var objCmd = new SqlCommand("User_GetRolesByUserId", CommandType.StoredProcedure);
+            objCmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
+            return (await objCmd.ExecuteArrayByteAsync()).Select(r => (Web.Role)r).ToArray();
         }
 
         /// <summary>
@@ -204,12 +228,12 @@ namespace eCommerce.Web.Data
         /// </summary>
         /// <param name="editorUserId">Usuario administrador que realiza la acción</param>
         /// <param name="userId">Identificador del usuario</param>
-        public static bool Delete(int editorUserId, int userId)
+        public static async Task<bool> DeleteAsync(int editorUserId, int userId)
         {
             using var objCmd = new SqlCommand("User_Delete", CommandType.StoredProcedure);
             objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
             objCmd.Parameters.Add("@EditorUserId", SqlDbType.Int).Value = editorUserId;
-            int result = objCmd.ExecuteReturnInt32();
+            int result = await objCmd.ExecuteReturnInt32Async();
 
             if (result == Const.SQL_NO_PERMISSION)
                 throw new SecurityException();
@@ -218,66 +242,22 @@ namespace eCommerce.Web.Data
         }
 
         /// <summary>
-        /// Devuelve los roles de un usuario
-        /// </summary>
-        /// <param name="userId">Identificador del suario</param>
-        /// <returns>Roles del suario</returns>
-        public static Role[] GetRoles(int userId)
-        {
-            using var objCmd = new SqlCommand("User_GetRolesByUserId", CommandType.StoredProcedure);
-            objCmd.Parameters.Add("@userId", SqlDbType.Int).Value = userId;
-            return objCmd.ExecuteArrayByte().Select(r => (Role)r).ToArray();
-        }
-
-        /// <summary>
-        /// Devuelve si un usuario está en un rol
-        /// </summary>
-        /// <param name="username">Usuario</param>
-        /// <param name="roleName">Rol</param>
-        /// <returns>Devuelve si un usuario está en un rol</returns>
-        public static bool IsInRole(string username, string roleName)
-        {
-            using var objCmd = new SqlCommand("User_IsInRole", CommandType.StoredProcedure);
-            objCmd.Parameters.Add("@username", SqlDbType.NVarChar, 255).Value = username;
-            objCmd.Parameters.Add("@roleName", SqlDbType.NVarChar, 20).Value = roleName;
-            return objCmd.ExecuteReturnInt32() > 0;
-        }
-
-        /// <summary>
-        /// Devuelve si un usuario tiene un rol específico
-        /// </summary>
-        /// <param name="userId">Identificador del usuario</param>
-        /// <param name="role">Role que debe tener</param>
-        /// <returns><c>true</c> si el usuario tiene asignado ese rol o <c>false</c> en caso contrario</returns>
-        public static bool HasRole(int userId, Role role)
-        {
-            using var objCmd = new SqlCommand("User_HasRole", CommandType.StoredProcedure);
-            objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-            objCmd.Parameters.Add("@RoleId", SqlDbType.TinyInt).Value = (byte)role;
-            return objCmd.ExecuteReturnInt32() != 0;
-        }
-
-        /// <summary>
         /// Desactiva un usuario
         /// </summary>
-        /// <param name="userId">Identificador del usuario</param>
-        public static void Deactivate(int userId)
-        {
-            using var objCmd = new SqlCommand("User_DeactivateByUserId", CommandType.StoredProcedure);
-            objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-            objCmd.ExecuteNonQuery();
-        }
-
-        /// <summary>
-        /// Desactiva un usuario
-        /// </summary>
+        /// <param name="editorUserId">Usuario administrador que realiza la acción</param>
         /// <param name="username">Identificador del usuario</param>
         /// <returns>Si se pudo realizar la acción con éxito</returns>
-        public static bool Deactivate(string username)
+        public static async Task<bool> DeactivateAsync(int editorUserId, string username)
         {
             using var objCmd = new SqlCommand("User_Deactivate", CommandType.StoredProcedure);
             objCmd.Parameters.Add("@username", SqlDbType.NVarChar, 255).Value = username;
-            return objCmd.ExecuteReturnInt32() > 0;
+            objCmd.Parameters.Add("@EditorUserId", SqlDbType.Int).Value = editorUserId;
+            int result = await objCmd.ExecuteReturnInt32Async();
+
+            if (result == Const.SQL_NO_PERMISSION)
+                throw new SecurityException();
+
+            return result > 0;
         }
 
         /// <summary>
@@ -287,25 +267,13 @@ namespace eCommerce.Web.Data
         /// <param name="oldPassword">Contraseña anterior</param>
         /// <param name="newPassword">Contraseña nueva</param>
         /// <returns>Si se pudo realizar la acción con éxito</returns>
-        public static bool ChangePassword(string username, string oldPassword, string newPassword)
+        public static async Task<bool> ChangePasswordAsync(string username, string oldPassword, string newPassword)
         {
             using var objCmd = new SqlCommand("User_ChangePassword", CommandType.StoredProcedure);
             objCmd.Parameters.Add("@username", SqlDbType.NVarChar, 255).Value = username;
             objCmd.Parameters.Add("@oldPassword", SqlDbType.NVarChar, 255).Value = oldPassword;
             objCmd.Parameters.Add("@newPassword", SqlDbType.NVarChar, 255).Value = newPassword;
-            return objCmd.ExecuteReturnInt32() > 0;
-        }
-
-        /// <summary>
-        /// Desbloquea un usuario
-        /// </summary>
-        /// <param name="username">Identificador del usuario</param>
-        /// <returns>Si se pudo realizar la acción con éxito</returns>
-        public static bool Unlock(string username)
-        {
-            using var objCmd = new SqlCommand("User_Unlock", CommandType.StoredProcedure);
-            objCmd.Parameters.Add("@username", SqlDbType.NVarChar, 255).Value = username;
-            return objCmd.ExecuteReturnInt32() > 0;
+            return await objCmd.ExecuteReturnInt32Async() > 0;
         }
 
         /// <summary>
@@ -314,12 +282,12 @@ namespace eCommerce.Web.Data
         /// <param name="username">Usuario</param>
         /// <param name="password">Contraseña</param>
         /// <returns>Resultado de la autenticación</returns>
-        public static ValidateResult Validate(string username, string password)
+        public static async Task<bool> ValidateAsync(string username, string password)
         {
             using var objCmd = new SqlCommand("User_Validate", CommandType.StoredProcedure);
             objCmd.Parameters.Add("@username", SqlDbType.NVarChar, 255).Value = username;
             objCmd.Parameters.Add("@password", SqlDbType.NVarChar, 255).Value = password;
-            return (ValidateResult)objCmd.ExecuteReturnInt32();
+            return await objCmd.ExecuteReturnInt32Async() > 0;
         }
 
         #endregion
@@ -329,7 +297,7 @@ namespace eCommerce.Web.Data
         /// </summary>
         /// <param name="data">Datos del usuario</param>
         /// <param name="userId">Identificador del usuario</param>
-        internal static bool Save(int userId, UserModel data)
+        internal static async Task<bool> SaveAsync(int userId, UserModel data)
         {
             using var objCmd = new SqlCommand();
             objCmd.CommandType = CommandType.StoredProcedure;
@@ -342,13 +310,19 @@ namespace eCommerce.Web.Data
                 objCmd.CommandText = "User_Add";
             objCmd.Parameters.Add("@EditorUserId", SqlDbType.Int).Value = userId;
             objCmd.Parameters.Add("@Username", SqlDbType.NVarChar, 255).Value = data.Username;
-            objCmd.Parameters.Add("@Email", SqlDbType.NVarChar, -1).Value = data.Email;
+            objCmd.Parameters.Add("@FirstName", SqlDbType.NVarChar, 150).Value = data.FirstName;
+            objCmd.Parameters.Add("@LastName", SqlDbType.NVarChar, 50).Value = data.LastName;
             objCmd.Parameters.Add("@IsActive", SqlDbType.Bit).Value = data.IsActive;
-            objCmd.Parameters.Add("@EnterpriseId", SqlDbType.Int).Value = data.EnterpriseId;
             if (!string.IsNullOrEmpty(data.Password))
                 objCmd.Parameters.Add("@Password", SqlDbType.NVarChar, 50).Value = data.Password;
-            objCmd.Parameters.Add("@Roles", SqlDbType.VarChar, 100).Value = String.Join(",", data.Roles.Select(r => ((byte)r).ToString()));
-            return objCmd.ExecuteReturnInt32() == 0;
+            if (data.Roles != null && data.Roles.Length > 0)
+                objCmd.Parameters.Add("@Roles", SqlDbType.VarChar, 100).Value = string.Join(",", data.Roles.Select(r => ((byte)r).ToString()));
+            int result = await objCmd.ExecuteReturnInt32Async();
+
+            if (result == Const.SQL_NO_PERMISSION)
+                throw new SecurityException();
+
+            return result == 0;
         }
 
         /// <summary>
@@ -357,38 +331,59 @@ namespace eCommerce.Web.Data
         /// <param name="currentPassword">Contraseña actual</param>
         /// <param name="newPassword">Nueva contraseña</param>
         /// <returns>Devuelve si se pudo cambiar la contraseña</returns>
-        internal static bool UpdatePassword(int userId, string currentPassword, string newPassword)
+        internal static async Task<bool> UpdatePasswordAsync(int userId, string currentPassword, string newPassword)
         {
             using var objCmd = new SqlCommand("User_UpdatePassword", CommandType.StoredProcedure);
             objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
             objCmd.Parameters.Add("@CurrentPassword", SqlDbType.NVarChar, 100).Value = currentPassword;
             objCmd.Parameters.Add("@newPassword", SqlDbType.NVarChar, 100).Value = newPassword;
-            return objCmd.ExecuteReturnInt32() > 0;
+            return await objCmd.ExecuteReturnInt32Async() > 0;
         }
 
         /// <summary>
         /// Devuelve el listado de usuarios
         /// </summary>
         /// <returns>Listado de usuario</returns>
-        public static DataTable ListAll(int userId)
+        public static async Task<DataTable> ListAllAsync(int userId)
         {
-            if (!HasRole(userId, Role.Admin))
+            using var objCmd = new SqlCommand("User_List", CommandType.StoredProcedure);
+            objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+            var result = objCmd.Parameters.Add("@Result", SqlDbType.Int);
+            result.Direction = ParameterDirection.ReturnValue;
+
+            using var objDT = await objCmd.ExecuteDataTableAsync();
+
+            if (result.Value != null && (int)result.Value == Const.SQL_NO_PERMISSION)
                 throw new SecurityException();
-            using var cmd = new SqlCommand("User_List", CommandType.StoredProcedure);
-            return cmd.ExecuteDataTable();
+
+            return objDT;
         }
 
         /// <summary>
-        /// devuelve la lista de usuario para generar el excel de descarga
+        /// Devuelve si un usuario tiene un rol específico
         /// </summary>
-        /// <param name="userId">usuario que realiza la acción</param>
-        /// <returns></returns>
-        public static DataTable ListForExcel(int userId)
+        /// <param name="userId">Identificador del usuario</param>
+        /// <param name="role">Role que debe tener</param>
+        /// <returns><c>true</c> si el usuario tiene asignado ese rol o <c>false</c> en caso contrario</returns>
+        public static async Task<bool> HasRoleAsync(int userId, Role role)
         {
-            if (!HasRole(userId, Role.Admin))
+            using var objCmd = new SqlCommand("User_HasRole", CommandType.StoredProcedure);
+            objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+            objCmd.Parameters.Add("@RoleId", SqlDbType.TinyInt).Value = (byte)role;
+            return await objCmd.ExecuteReturnInt32Async() != 0;
+        }
+
+        /// <summary>
+        /// genera un excel de los usuarios
+        /// </summary>
+        /// <param name="userId">identificador del usuario que realiza la acción</param>
+        /// <returns></returns>
+        public static async Task<DataTable> ListForExcelAsync(int userId)
+        {
+            if (!await HasRoleAsync(userId, Role.Admin))
                 throw new SecurityException();
             using var cmd = new SqlCommand("User_ListForExcel", CommandType.StoredProcedure);
-            return cmd.ExecuteDataTable();
+            return await cmd.ExecuteDataTableAsync();
         }
     }
 }

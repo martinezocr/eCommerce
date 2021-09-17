@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using eCommerce.Web.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using eCommerce.Web.Models;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -24,7 +24,10 @@ namespace eCommerce.Web.Controllers
         /// Constructor del controlador
         /// </summary>
         /// <param name="logger"></param>
-        public UserController(ILogger<UserController> logger) => _logger = logger;
+        public UserController(ILogger<UserController> logger)
+        {
+            _logger = logger;
+        }
 
         /// <summary>
         /// Entidad para cambiar de contraseña
@@ -48,24 +51,24 @@ namespace eCommerce.Web.Controllers
         /// <returns>Listado de los usuarios</returns>
         [HttpPost("list")]
         [Authorize(Roles = "Admin")]
-        public DataTableModel List([FromBody] QueryDataModel<Data.User.Filter, Data.User.Fields> queryData)
+        public async Task<DataTableModel> ListAsync([FromBody] QueryDataModel<Data.User.Filter, Data.User.Fields> queryData)
         {
-            var objList = Data.User.List(queryData.Order, queryData.OrderAsc, queryData.Filter, queryData.From, queryData.Length, out int RecordCount);
+            (var objList, int recordCount) = await Data.User.ListAsync(HttpContext.GetUserId(), queryData.Order, queryData.OrderAsc, queryData.Filter, queryData.From, queryData.Length);
 
             return new DataTableModel()
             {
-                RecordsCount = RecordCount,
+                RecordsCount = recordCount,
                 Data = objList
             };
         }
 
         /// <summary>
-        /// Elimina un usuario
+        /// Desactiva un usuario
         /// </summary>
         /// <param name="userId"> Identificador del usuario</param>
         [HttpDelete("{userId:int}")]
         [Authorize(Roles = "Admin")]
-        public void Delete(int userId) => Data.User.Delete(HttpContext.GetUserId(), userId);
+        public async Task DeleteAsync(int userId) => await Data.User.DeleteAsync(HttpContext.GetUserId(), userId);
 
         /// <summary>
         /// Devuelve los datos del usuario actual
@@ -81,17 +84,17 @@ namespace eCommerce.Web.Controllers
         /// <returns>Datos del usuario</returns>
         [HttpGet("{userId:int}")]
         [Authorize(Roles = "Admin")]
-        public UserModel Get(int userId)
+        public async Task<UserModel> GetAsync(int userId)
         {
-            var objUserDR = Data.User.Get(userId);
+            var objUserDR = Data.User.Get(HttpContext.GetUserId(), userId);
             return new UserModel
             {
                 UserId = userId,
                 Username = objUserDR["Username"] as string,
+                FirstName = objUserDR["Firstname"] as string,
+                LastName = objUserDR["Lastname"] as string,
                 IsActive = (bool)objUserDR["IsActive"],
-                Roles = Data.User.GetRoles(userId),
-                Email = objUserDR["Email"] as string,
-                EnterpriseId = objUserDR.IsNull("EnterpriseId") ? (int?)null : (int)objUserDR["EnterpriseId"],
+                Roles = await Data.User.GetRolesAsync(userId)
             };
         }
 
@@ -101,23 +104,20 @@ namespace eCommerce.Web.Controllers
         /// <param name="data">Información del usuario</param>
         /// <returns>Resultado de la autenticación</returns>
         [HttpPost("auth")]
-        public async Task<UserData> Auth([FromBody] AuthModel data)
+        public async Task<UserData> AuthAsync([FromBody] AuthModel data)
         {
-            Data.User.ValidateResult result = Data.User.Validate(data.Username, data.Password);
+            bool bolOk = await Data.User.ValidateAsync(data.Username, data.Password);
+            if (!bolOk)
+                return null;
 
-            return result switch
-            {
-                Data.User.ValidateResult.NotExists => null,
-                Data.User.ValidateResult.IsLocked => new UserData() { IsLocked = true },
-                _ => await LoginInfo.Set(HttpContext, data.Username, data.Remember),
-            };
+            return await LoginInfo.Set(HttpContext, data.Username, data.Remember);
         }
 
         /// <summary>
         /// Deslogea al usuario
         /// </summary>
         [HttpGet("logout")]
-        public void Logout() => HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        public async Task LogoutAsync() => await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         /// <summary>
         /// Graba los datos de un usuario
@@ -125,7 +125,7 @@ namespace eCommerce.Web.Controllers
         /// <param name="data"></param>
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public bool Put([FromBody] UserModel data) => Data.User.Save(HttpContext.GetUserId(), data);
+        public async Task<bool> PutAsync([FromBody] UserModel data) => await Data.User.SaveAsync(HttpContext.GetUserId(), data);
 
         /// <summary>
         /// Cambio de contraseña
@@ -133,27 +133,26 @@ namespace eCommerce.Web.Controllers
         /// <param name="data">Datos de la contraseña actual y la nueva</param>
         /// <returns>Resultado del cambio de la contraseña</returns>
         [HttpPost("password")]
-        [Authorize]
-        public bool UpdatePassword([FromBody] UserDataPassword data) =>
-            Data.User.UpdatePassword(HttpContext.GetUserId(), data.Current, data.New);
+        public async Task<bool> UpdatePasswordAsync([FromBody] UserDataPassword data) =>
+            await Data.User.UpdatePasswordAsync(HttpContext.GetUserId(), data.Current, data.New);
 
         /// <summary>
         /// Listado de los Usuarios
         /// </summary>
         /// <returns>Listado de los usuarios</returns>
         [HttpGet("all")]
-        [Authorize]
-        public DataTable List() => Data.User.ListAll(HttpContext.GetUserId());
+        [Authorize(Roles = "Admin")]
+        public async Task<DataTable> ListAllAsync() => await Data.User.ListAllAsync(HttpContext.GetUserId());
 
         /// <summary>
-        /// genera la descargar del excel
+        /// devuelve un excel con datos de la tabla de usuarios
         /// </summary>
         /// <returns></returns>
         [HttpGet("download-excel")]
         [Authorize(Roles = "Admin")]
-        public IActionResult DownloadExcel()
+        public async Task<IActionResult> DownloadExcelAsync()
         {
-            return File(Helpers.Excel.ToExcel(Data.User.ListForExcel(HttpContext.GetUserId()), "Usuarios"), Helpers.Excel.MIME_XLSX, "Usuarios.xlsx");
+            return File(Helpers.Excel.ToExcel(await Data.User.ListForExcelAsync(HttpContext.GetUserId()), "Usuarios"), Helpers.Excel.MIME_XLSX, "Usuarios.xlsx");
         }
     }
 }

@@ -5,8 +5,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from '../../services/user.service';
 import { Settings } from '../../app.settings';
 import { UserModel } from '../../models/user.model';
-import { EnterpriseModel } from '../../models/enterprise.model';
-import { EnterpriseService } from '../../services/enterprise.service';
 
 @Component({
   selector: 'app-user',
@@ -17,22 +15,19 @@ export class UserDialog implements OnInit {
   working = true;
   userForm: FormGroup;
 
-  enterpriseList: EnterpriseModel[] = [];
-
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     public dialogRef: MatDialogRef<UserDialog>,
     @Inject(MAT_DIALOG_DATA) private userId: number,
     private userService: UserService,
-    private enterpriseService: EnterpriseService,
     private snackBar: MatSnackBar) {
     //Creo el formulario
     this.userForm = this.fb.group({
-      username: ['', [Validators.required, Validators.maxLength(255)]],
-      email: ['', [Validators.required]],
+      username: ['', [Validators.required, Validators.email]],
       isActive: true,
-      roles: ['', [Validators.required]],
-      enterpriseId: ['', [Validators.required]],
+      firstName: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
+      roles: null,
       password: [null, userId === null || userId === 0 ? [Validators.required, Validators.minLength(6)] : [Validators.minLength(6)]],
       confirmPassword: [null, userId === null || userId === 0 ? [Validators.required] : null]
     }, { validator: this.checkPasswords });
@@ -43,11 +38,6 @@ export class UserDialog implements OnInit {
   }
 
   ngOnInit() {
-    //cargo la lista de empresas
-    this.enterpriseService.listAll()
-      .then(res => { this.enterpriseList = res })
-      .catch(() => this.snackBar.open(Settings.ERROR_COMM));
-
     //Cargo los datos del usuario
     if (this.userId !== undefined && this.userId !== null)
       this.userService.get(this.userId)

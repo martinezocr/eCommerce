@@ -6,23 +6,19 @@
   <mat-dialog-content class="mat-typography">
     <div fxLayout="row wrap" fxLayoutGap="1%">
       <mat-form-field fxFlex="73">
-        <input matInput cdkFocusInitial placeholder="Usuario/Login" maxlength="255" formControlName="username">
+        <input matInput cdkFocusInitial placeholder="Email" maxlength="255" formControlName="username">
       </mat-form-field>
-      <mat-slide-toggle fxFlex="20" fxFlexOffset="5%" fxFlexAlign="center" formControlName="isActive" [color]="'primary'">Activo</mat-slide-toggle>
-      <mat-form-field fxFlex="99">
-        <input matInput placeholder="Email" formControlName="email">
+      <mat-slide-toggle fxFlex="20" fxFlexOffset="5%" fxFlexAlign="center" formControlName="isActive">Activo</mat-slide-toggle>
+      <mat-form-field fxFlex="49">
+        <input matInput placeholder="Nombre" maxlength="150" formControlName="firstName">
       </mat-form-field>
-      <mat-form-field fxFlex="99">
-        <mat-select placeholder="Empresa" formControlName="enterpriseId">
-          <mat-option *ngFor="let enterprise of enterpriseList" [value]="enterprise.enterpriseId">
-            {{enterprise.name}}
-          </mat-option>
-        </mat-select>
+      <mat-form-field fxFlex="49">
+        <input matInput placeholder="Apellido" maxlength="50" formControlName="lastName">
       </mat-form-field>
-      <mat-form-field fxFlex="99">
-        <mat-select placeholder="Roles" formControlName="roles" multiple>
+      <mat-form-field fxFlex="100">
+        <mat-select placeholder="Puede gestionar" multiple formControlName="roles">
           <mat-option [value]="255">Administrador</mat-option>
-          <mat-option [value]="1">Usuario</mat-option>
+          <mat-option [value]="1">Cliente</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field fxFlex="49">

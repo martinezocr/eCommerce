@@ -39,7 +39,7 @@ table {
 
 /*Filtros*/
 .filters {
-  padding: 10px 10px 0;
+  padding: 20px 20px 0;
 }
 
 .mat-form-field {
@@ -83,6 +83,10 @@ th button {
 
 .cont_act_menu {
   width: inherit;
+  display: row;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /*.mat-column-tools{
@@ -96,5 +100,13 @@ th button {
 
   #actions-sales {
     display: flex;
+  }
+
+  .cont_act_menu {
+    width: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }
