@@ -71,7 +71,7 @@ namespace eCommerce.Web
             if (string.IsNullOrWhiteSpace(username))
                 throw new ArgumentException("username");
 
-            var objData = Data.User.Get(username);
+            var objData = await Data.User.GetAsync(username);
             var objUserInfo = new UserData()
             {
                 Username = objData["Username"] as string,

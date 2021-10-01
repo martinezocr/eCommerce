@@ -86,7 +86,7 @@ namespace eCommerce.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<UserModel> GetAsync(int userId)
         {
-            var objUserDR = Data.User.Get(HttpContext.GetUserId(), userId);
+            var objUserDR = await Data.User.GetAsync(HttpContext.GetUserId(), userId);
             return new UserModel
             {
                 UserId = userId,

@@ -1,0 +1,21 @@
+/* Structure */
+.container {
+  position: relative;
+  min-height: 200px;
+}
+
+.noscroll {
+  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.mat-dialog-actions {
+  margin: 0 0 -15px 0px !important;
+}
+
+.container {
+  max-height: 590px;
+  max-height: 65vh;
+  text-align: center;
+}

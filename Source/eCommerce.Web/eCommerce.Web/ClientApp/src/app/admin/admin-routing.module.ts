@@ -5,6 +5,7 @@ import { RoleGuard } from '../role.guard';
 import { UsersComponent } from './users/users.component';
 import { LoginComponent } from './login/login.component';
 import { EmptyComponent } from './empty/empty.component';
+import { ProductsComponent } from './products/products.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,12 @@ const routes: Routes = [
   {
     path: 'usuarios',
     component: UsersComponent,
+    data: { roles: [UserRole.Admin], login: '/administrador/ingreso' },
+    canActivate: [RoleGuard]
+  },
+  {
+    path: 'productos',
+    component: ProductsComponent,
     data: { roles: [UserRole.Admin], login: '/administrador/ingreso' },
     canActivate: [RoleGuard]
   },

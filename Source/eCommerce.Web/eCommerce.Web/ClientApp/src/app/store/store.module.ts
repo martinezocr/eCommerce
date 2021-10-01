@@ -11,7 +11,7 @@ import { UtilsModule } from '../utils/utils.module';
 
 import { ProductItemComponent } from './product-item/product-item.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
-import { ProductsComponent } from './products/products.component';
+import { ProductsListComponent } from './products-list/products-list.component';
 import { StoreComponent } from './store/store.component'
 import { HomeComponent } from './home/home.component';
 import { CartComponent } from './cart/cart.component'
@@ -21,7 +21,7 @@ import { CartItemComponent } from './cart/cart-item/cart-item.component'
   declarations: [
     ProductItemComponent,
     ProductDetailComponent,
-    ProductsComponent,
+    ProductsListComponent,
     StoreComponent,
     HomeComponent,
     CartComponent,

@@ -179,12 +179,12 @@ namespace eCommerce.Web.Data
         /// <param name="editorUserId">Usuario administrador que realiza la acción</param>
         /// <param name="userId">Identificador del usuario</param>
         /// <returns>Datos del usuario</returns>
-        public static DataRow Get(int editorUserId, int userId)
+        public static async Task<DataRow> GetAsync(int editorUserId, int userId)
         {
             using var objCmd = new SqlCommand("User_Get", CommandType.StoredProcedure);
             objCmd.Parameters.Add("@EditorUserId", SqlDbType.Int).Value = editorUserId;
             objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
-            return objCmd.ExecuteDataRow();
+            return await objCmd.ExecuteDataRowAsync();
         }
 
         /// <summary>
@@ -192,11 +192,11 @@ namespace eCommerce.Web.Data
         /// </summary>
         /// <param name="username">Identificador del usuario</param>
         /// <returns>Datos básicos del usuario</returns>
-        public static DataRow Get(string username)
+        public static async Task<DataRow> GetAsync(string username)
         {
             using var objCmd = new SqlCommand("User_GetByUsername", CommandType.StoredProcedure);
             objCmd.Parameters.Add("@username", SqlDbType.NVarChar, 255).Value = username;
-            return objCmd.ExecuteDataRow();
+            return await objCmd.ExecuteDataRowAsync();
         }
 
         /// <summary>

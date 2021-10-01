@@ -12,17 +12,21 @@ import { UtilsModule } from '../utils/utils.module'
 //Componentes
 import { UsersComponent } from './users/users.component';
 import { LoginComponent } from './login/login.component';
+import { ProductsComponent } from './products/products.component';
 
 //Diálogos
 import { UserDialog } from './users/user.dialog';
 import { EmptyComponent } from './empty/empty.component'
+import { ProductDialog } from './products/product.dialog';
 
 @NgModule({
   declarations: [
     UsersComponent,
     UserDialog,
     LoginComponent,
-    EmptyComponent
+    EmptyComponent,
+    ProductsComponent,
+    ProductDialog
   ],
   imports: [
     CommonModule,
@@ -35,7 +39,8 @@ import { EmptyComponent } from './empty/empty.component'
   ],
   providers: [],
   entryComponents: [
-    UserDialog
+    UserDialog,
+    ProductDialog
   ]
 })
 export class AdminModule { }

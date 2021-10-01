@@ -20,9 +20,9 @@
         /// </summary>
         public const int SQL_ERROR_DELETE = 547;
         /// <summary>
-        /// path donde se van a guardar los archivos
+        /// path donde se van a guardar los archivos de los productos
         /// </summary>
-        public const string FOLDER_FILE = "Files";
+        public const string FOLDER_PRODUCT_IMAGEFILE = "Files";
         /// <summary>
         /// tiempo de expiración del carrito de compras
         /// </summary>

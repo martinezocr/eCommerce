@@ -24,6 +24,11 @@ namespace eCommerce.Web.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// guarda o actualiza la información de un carrito de compras
+        /// </summary>
+        /// <param name="cart">informaciòn del carrito</param>
+        /// <returns>devuelve el carrito de compras creado o actualizado</returns>
         [HttpPut()]
         public async Task<CartModel> SaveCartAsync([FromBody] CartModel cart)
         {
@@ -32,15 +37,17 @@ namespace eCommerce.Web.Controllers
                 var cartId = await Data.Cart.SaveAsync(cart);
                 return await Data.Cart.GetByIdAsync(cartId);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Carrito -> {ex.Message}");
                 return null;
             }
         }
 
         /// <summary>
-        /// genera la descargar del excel
+        /// devuelve la información del carrito de compras
         /// </summary>
+        /// <param name="cartId">identificador delc arrito</param>
         /// <returns></returns>
         [HttpGet("{cartId}")]
         public async Task<CartModel> GetAsync(Guid cartId)
@@ -48,6 +55,11 @@ namespace eCommerce.Web.Controllers
             return await Data.Cart.GetByIdAsync(cartId);
         }
 
+        /// <summary>
+        /// eliimina el carrito de compras
+        /// </summary>
+        /// <param name="cartId">identificador del carrito</param>
+        /// <returns></returns>
         [HttpDelete("{cartId:guid}")]
         public async Task<bool> DeleteCartAsync(Guid cartId)
         {

@@ -7,12 +7,30 @@ export class ProductModel {
   description: string;
   price: number;
   oldPrice: number;
-  images: ProductImagesModel[];
+  isDiscount: boolean
+  isActive: boolean
+  images: ProductImageModel[];
 }
 
-export class ProductImagesModel {
+export class ProductImageModel {
   productImageId: string;
+  productId: number;
   order: number;
-  url: string;
-  name: string;
+  file: File;
+  filename: string;
+  mimeType: string;
+}
+
+export enum ProductFields {
+  productId = 0,
+  brand = 1,
+  category = 2,
+  title = 3,
+  price = 4,
+  isDiscount = 5,
+  isActive = 6
+}
+
+export class ProductFilter {
+  freeText: string;
 }

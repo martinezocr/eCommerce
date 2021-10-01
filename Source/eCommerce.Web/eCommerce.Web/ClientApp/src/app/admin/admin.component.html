@@ -3,17 +3,7 @@
     <ng-container class="grid">
       <span>eCommerce</span>
       <span class="space-between"></span>
-      <ng-container>
-        <button mat-icon-button>
-          <mat-icon matBadgeColor="warn">favorite</mat-icon>
-        </button>
-        <button mat-icon-button>
-          <mat-icon>person</mat-icon>
-        </button>
-      </ng-container>
     </ng-container>
-  </mat-toolbar-row>
-  <mat-toolbar-row>
     <ng-container class="grid" *ngIf="userService.hasRole([UserRole.Admin])">
       <a mat-button [routerLinkActive]="['active']" [routerLink]="['/administrador/productos']"><mat-icon>storefront</mat-icon>&nbsp; Productos</a>
       <a mat-button [routerLinkActive]="['active']" [routerLink]="['/administrador/ventas']"><mat-icon>contact_page</mat-icon>&nbsp; Ventas</a>
@@ -22,8 +12,17 @@
         <mat-menu #adminMenu="matMenu">
           <a mat-button [routerLinkActive]="['active']" [routerLink]="['/administrador/usuarios']"><mat-icon>home</mat-icon>&nbsp; Usuarios</a>
           <a mat-button [routerLinkActive]="['active']" [routerLink]="['/administrador/clientes']"><mat-icon>home</mat-icon>&nbsp; Clientes</a>
+          <a mat-menu-item (click)="logout()"><mat-icon>exit_to_app</mat-icon>Salir</a>
         </mat-menu>
       </ng-container>
+    </ng-container>
+    <ng-container>
+      <button mat-icon-button>
+        <mat-icon matBadgeColor="warn">favorite</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon>person</mat-icon>
+      </button>
     </ng-container>
   </mat-toolbar-row>
 </mat-toolbar>

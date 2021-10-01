@@ -1,5 +1,5 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
-import { FileModel } from '../../models/file.model';
+import { ProductImageModel } from '../../models/product-image.model';
 import { Settings } from '../../app.settings';
 
 @Component({
@@ -10,7 +10,7 @@ import { Settings } from '../../app.settings';
 })
 export class FileComponent {
 
-  @Input() file: FileModel;
+  @Input() file: ProductImageModel;
 
-  url = () => Settings.ROOT_CONTROLLERS + 'file/' + this.file.fileId;
+  url = () => Settings.ROOT_CONTROLLERS + 'productimage/' + this.file.productImageId;
 }

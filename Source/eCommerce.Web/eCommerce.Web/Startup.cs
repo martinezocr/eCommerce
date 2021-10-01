@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using System.IO;
 
 namespace eCommerce.Web
 {
@@ -92,12 +93,17 @@ namespace eCommerce.Web
 
                 if (env.IsDevelopment())
                 {
-                    spa.Options.StartupTimeout = new System.TimeSpan(0, 5, 0);
+                    //spa.Options.StartupTimeout = new System.TimeSpan(0, 5, 0);
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
 
             app.UseStatusCodePagesWithRedirects("~/errors/{0}");
+
+            //creo los directorios necesarios para alojar las imagenes
+            var folderProductImage = Path.Combine(env.WebRootPath, Const.FOLDER_PRODUCT_IMAGEFILE);
+            if (!Directory.Exists(folderProductImage))
+                Directory.CreateDirectory(folderProductImage);
 
         }
     }

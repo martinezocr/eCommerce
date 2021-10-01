@@ -1,0 +1,80 @@
+<div class="spinner-container" *ngIf="working">
+  <mat-spinner></mat-spinner>
+</div>
+<form [formGroup]="form" class="noscroll">
+
+  <mat-dialog-content class="mat-typography noscroll">
+    <div fxLayout="row" fxLayoutGap="1%" class="noscroll" style="max-height: 590px; max-height: 65vh;">
+      <div fxFlex="49" class="scrollY">
+        <h4 mat-dialog-title>Producto</h4>
+        <div fxLayout="row wrap" fxLayoutGap="1%">
+          <mat-form-field fxFlex="100">
+            <input matInput cdkFocusInitial placeholder="Título" maxlength="100" formControlName="title">
+          </mat-form-field>
+          <mat-form-field fxFlex="100">
+            <input matInput cdkFocusInitial placeholder="Descripción" formControlName="description">
+          </mat-form-field>
+
+          <mat-form-field fxFlex="100">
+            <mat-select placeholder="Marca" formControlName="brandId">
+              <mat-option *ngFor="let brand of brands" [value]="brand.brandId">{{brand.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="100">
+            <mat-select placeholder="Categoría" formControlName="categoryId">
+              <mat-option *ngFor="let category of categories" [value]="category.categoryId">{{category.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-slide-toggle fxFlex="noGrow" fxFlexAlign="center" formControlName="isActive">Activo</mat-slide-toggle>
+          <mat-slide-toggle fxFlex="noGrow" fxFlexAlign="center" formControlName="isDiscount">Es Oferta</mat-slide-toggle>
+
+          <mat-form-field fxFlex="100">
+            <input matInput cdkFocusInitial placeholder="Precio" formControlName="price">
+          </mat-form-field>
+
+          <mat-form-field fxFlex="100" [class.mat-form-field-invalid]="form.hasError('notOldPrice')">
+            <input matInput cdkFocusInitial placeholder="Precio Anterior" formControlName="oldPrice">
+          </mat-form-field>
+
+
+          <mat-form-field fxFlex="100">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput
+                      formControlName="description"
+                      cdkTextareaAutosize
+                      cdkAutosizeMinRows="1"
+                      cdkAutosizeMaxRows="5"></textarea>
+          </mat-form-field>
+
+        </div>
+      </div>
+      <div fxFlex="49">
+        <h4 mat-dialog-title>Imágenes</h4>
+        <div cdkDropList class="drag-list scrollY" style="max-height: 54vh;"
+             (cdkDropListDropped)="dropFile($event)">
+          <div class="drag-box-files" *ngFor="let row of productImageList; let idx = index" cdkDrag>
+            <p fxFlex="79" style="text-overflow: ellipsis; overflow: hidden">{{row.filename}}</p>
+            <button fxFlex="9" mat-icon-button matTooltip="Eliminar" (click)="deleteFile(idx)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button fxFlex="9" mat-icon-button matTooltip="Ver archivo" *ngIf="row.productImageId !== null && row.productImageId !== undefined" (click)="viewFile(idx)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <div>
+      <button mat-button type="button" (click)="fileInput.click()">
+        <input #fileInput type="file" accept="image/*, video/*, audio/*" (change)="onFileInput($event)" style="display:none;" />
+        <ng-container>Agregar archivo</ng-container>
+      </button>
+      <button mat-button (click)="cancel()" type="button">Cancelar</button>
+      <button mat-button (click)="save()" type="submit">Guardar</button>
+    </div>
+  </mat-dialog-actions>
+</form>

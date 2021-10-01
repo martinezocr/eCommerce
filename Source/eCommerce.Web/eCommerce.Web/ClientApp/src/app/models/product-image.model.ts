@@ -1,8 +1,8 @@
 /**Entidad de las categorías */
-export class FileModel {
-  fileId: string;
+export class ProductImageModel {
+  productImageId: string;
   file: File;
   filename: string;
-  order: number;
   mimeType: string;
+  order: number;
 }
