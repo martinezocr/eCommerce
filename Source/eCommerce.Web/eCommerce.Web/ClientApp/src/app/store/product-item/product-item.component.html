@@ -1,10 +1,12 @@
-<mat-card (mouseover)="onHover=true" (mouseout)="onHover=false" (click)="viewProductDetail(1)">
-    <img mat-card-image src="https://picsum.photos/200" alt="Photo of a Shiba Inu">
+<app-card-loading *ngIf="!product"></app-card-loading>
+
+<mat-card *ngIf="product" (mouseover)="onHover=true" (mouseout)="onHover=false" (click)="viewProductDetail(product.productId)">
+    <img mat-card-image [src]="urlFirstImage" alt="nameImage">
   <!--<div class="img-container" fxLayout="row" fxLayoutAlign="center center">
   </div>-->
   <mat-card-content>
-    <mat-card-title>{{1500 | currency}}</mat-card-title>
-    <mat-card-subtitle [ngClass]="{ 'hover': onHover }" style="display:none">Producto - Dog Breed Produc</mat-card-subtitle>
+    <mat-card-title>{{product.price | currency}}</mat-card-title>
+    <mat-card-subtitle [ngClass]="{ 'hover': onHover }" style="display:none">{{product.title}}</mat-card-subtitle>
   </mat-card-content>
   <mat-card-actions dir="rtl">
     <button mat-icon-button [ngClass]="{ 'hover':  onHover }" style="display:none">

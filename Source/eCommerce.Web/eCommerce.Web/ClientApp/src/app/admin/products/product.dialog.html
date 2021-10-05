@@ -11,10 +11,7 @@
           <mat-form-field fxFlex="100">
             <input matInput cdkFocusInitial placeholder="Título" maxlength="100" formControlName="title">
           </mat-form-field>
-          <mat-form-field fxFlex="100">
-            <input matInput cdkFocusInitial placeholder="Descripción" formControlName="description">
-          </mat-form-field>
-
+          
           <mat-form-field fxFlex="100">
             <mat-select placeholder="Marca" formControlName="brandId">
               <mat-option *ngFor="let brand of brands" [value]="brand.brandId">{{brand.name}}</mat-option>

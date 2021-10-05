@@ -2,65 +2,51 @@
 
   <div class="grid">
 
-    <div class="search" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
-      <mat-form-field fxFlex.gt-sm="70" fxFlex.gt-xs="100">
-        <input matInput placeholder="Buscar">
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
+    <form #filterForm="ngForm" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
 
-      <mat-form-field>
-        <mat-select placeholder="Ordernar por" fxFlex.gt-sm="70" fxFlex.gt-xs="100" [(ngModel)]="this.filters.orderBy">
-          <mat-option [value]="1">Más relevante</mat-option>
-          <mat-option [value]="2">Menor precio</mat-option>
-          <mat-option [value]="3">Mayor precio</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-    </div>
-
-    <div class="space-line"></div>
-
-    <div fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%">
-
-      <div fxFlex.gt-sm="25" fxFlex.gt-xs="100" class="filters" fxLayout="column wrap"
-      fxLayout.xs="row wrap" fxLayoutAlign.xs="space-between">
-        <mat-form-field>
-          <mat-select placeholder="Categorías" multiple>
-            <mat-option [value]="1">Zapatillas</mat-option>
-            <mat-option [value]="2">Botines</mat-option>
-            <mat-option [value]="3">Ojotas</mat-option>
-          </mat-select>
+      <div class="search" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="1%" fxFlex="100">
+        <mat-form-field fxFlex.gt-sm="80" fxFlex.gt-xs="100">
+          <input matInput placeholder="Buscar" name="freeText" [(ngModel)]="this.filter.freeText">
+          <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
-        <mat-form-field>
-          <mat-select placeholder="Marcas" multiple>
-            <mat-option [value]="1">Adidas</mat-option>
-            <mat-option [value]="2">Nike</mat-option>
-            <mat-option [value]="3">Fila</mat-option>
+        <mat-form-field fxFlex.gt-sm="18" fxFlex.gt-xs="100">
+          <mat-select placeholder="Ordernar por" name="orderBy" [(ngModel)]="this.filter.orderBy">
+            <mat-option [value]="1">Más relevante</mat-option>
+            <mat-option [value]="2">Menor precio</mat-option>
+            <mat-option [value]="3">Mayor precio</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
 
-      <div fxFlex.gt-sm="70" fxFlex.gt-xs="100">
+      <div fxFlex.gt-sm="18" fxFlex.gt-xs="100" fxLayout="column wrap" fxLayoutAlign="start"
+           fxLayout.xs="row wrap" fxLayoutAlign.xs="space-between">
+
+        <mat-form-field>
+          <mat-select placeholder="Categoría" name="categoryId" [(ngModel)]="this.filter.categoryId" multiple>
+            <mat-option *ngFor="let category of categories" [value]="category.categoryId">{{category.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Marca" name="brandId" [(ngModel)]="this.filter.brandId" multiple>
+            <mat-option *ngFor="let brand of brands" [value]="brand.brandId">{{brand.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+
+      <div fxFlex.gt-sm="80" fxFlex.gt-xs="100">
         <mat-card>
-          <div fxLayout="row wrap" fxLayoutAlign="center center">
-            <app-product-item></app-product-item>
-            <app-product-item></app-product-item>
-            <app-product-item></app-product-item>
-
-            <app-product-item></app-product-item>
-            <app-product-item></app-product-item>
-            <app-product-item></app-product-item>
-
-            <app-product-item></app-product-item>
-            <app-product-item></app-product-item>
-            <app-product-item></app-product-item>
+          <div fxLayout="row wrap" fxLayoutAlign="center center" *ngFor="let productItem of data">
+            <app-product-item [product]="productItem"></app-product-item>
+            <app-product-item [product]="productItem"></app-product-item>
           </div>
         </mat-card>
-        <mat-paginator [length]="20"></mat-paginator>
+        <mat-paginator [length]="resultsLength"></mat-paginator>
       </div>
 
-    </div>
+    </form>
 
 
   </div>

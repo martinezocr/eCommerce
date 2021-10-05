@@ -5,6 +5,7 @@ import { SlidePanelComponent } from './slidePanel/slide-panel.component';
 import { FileComponent } from './file/file.component';
 import { CarouselComponent } from './carousel/carousel.component';
 import { ViewImageDialog } from './view-image/view-image.dialog';
+import { CardLoadingComponent } from './card-loading/card-loading.component';
 
 @NgModule({
   declarations: [
@@ -12,6 +13,7 @@ import { ViewImageDialog } from './view-image/view-image.dialog';
     FileComponent,
     CarouselComponent,
     ViewImageDialog,
+    CardLoadingComponent,
   ],
   imports: [
     CommonModule,
@@ -20,7 +22,8 @@ import { ViewImageDialog } from './view-image/view-image.dialog';
   exports: [
     SlidePanelComponent,
     FileComponent,
-    CarouselComponent
+    CarouselComponent,
+    CardLoadingComponent
     //AuMaskDirective
   ],
   entryComponents: [

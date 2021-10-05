@@ -1,6 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+import { Settings } from '../../app.settings';
 import { ProductModel } from '../../models/product.model';
 import { CartService } from '../../services/cart.service';
+import { ProductService } from '../../services/product.service';
 
 
 @Component({
@@ -11,17 +15,27 @@ import { CartService } from '../../services/cart.service';
 export class ProductDetailComponent implements OnInit {
   amount: number = 0;
   product: ProductModel;
-
+  urlImage: string;
   constructor(
-    private cartService: CartService
+    private cartService: CartService,
+    private productService: ProductService,
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) { }
 
+
   ngOnInit(): void {
-    this.product = new ProductModel();
-    this.product.title = 'Pelota de futbol N5 para chicos'
-    this.product.price = 1545.50;
-    this.product.description = "descripción del producto";
-    this.product.productId = 1;
+    this.route.paramMap
+      .subscribe(params => {
+        if (params.has('id')) {
+          this.productService.get(Number(params.get('id')))
+            .then(res => {
+              this.product = res;
+              this.urlImage = '/api/productImage/' + this.product.images[0].productImageId
+            })
+            .catch(() => this.snackBar.open(Settings.ERROR_COMM));
+        }
+      });
   }
 
   increment(): void {

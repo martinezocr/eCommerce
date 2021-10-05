@@ -49,16 +49,24 @@ namespace eCommerce.Web.Data
         }
 
         private const string PUBLIC_SELECT_ALL =
-            ";SELECT E.QuestionId, E.CategoryId, " +
-            " case when @Lang = 'es' then E.[QuestionEs] else E.[QuestionCa] end as Question," +
-            " E.IsActive, E.QuestionTypeId" +
-            " FROM [Question] AS E" +
-            " {2}" +
-            " ORDER BY {0} {1}";
+            @" ;SELECT P.[ProductId]
+                      ,P.[Title]
+                      ,P.[Description]
+                      ,P.[IsDiscount]
+                      ,P.[Price]
+                      ,P.[OldPrice]
+	                  ,PR.[ProductImageId]
+                      ,PR.[Filename]
+                      ,PR.[MimeType]
+                      ,PR.[Order]
+                  FROM [Product] P INNER JOIN ProductImage PR ON P.ProductId = PR.ProductId
+                {2}
+                ORDER BY {0} {1}
+                ";
 
         private const string PUBLIC_OFFSET = " OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY ";                 //{1} Desde - {2} Hasta
 
-        private const string PUBLIC_SELECTCOUNT = "SELECT COUNT(1) AS rows FROM [Question] AS E";
+        private const string PUBLIC_SELECTCOUNT = "SELECT COUNT(1) AS rows FROM [Product] AS P";
 
         /// <summary>
         /// Obtiene la lista de registros paginada, ordenada y filtrada
@@ -71,7 +79,7 @@ namespace eCommerce.Web.Data
         /// <param name="filter">Filtros a utilizar</param>
         /// <param name="recordCount">Cantidad de registros encontrados con los filtros establecidos</param>
         /// <returns>Registros obtenidos con los filtros y orden seleccionados</returns>
-        public static async Task<(DataTable, int)> PublicListAsync(int userId, PublicFields? orderField, bool? orderAscendant, PublicFilter filter, int? from, int? length)
+        public static async Task<(List<ProductModel>, int)> PublicListAsync(PublicFields? orderField, bool? orderAscendant, PublicFilter filter, int? from, int? length)
         {
             if (from.HasValue != length.HasValue)
                 throw new ArgumentOutOfRangeException(nameof(from));
@@ -83,9 +91,9 @@ namespace eCommerce.Web.Data
             if (orderField.HasValue)
                 strOrderField = orderField.Value switch
                 {
-                    PublicFields.Relevant => "",
-                    PublicFields.MinPrice => "",
-                    PublicFields.MaxPrice => "",
+                    PublicFields.Relevant => "P.ProductId",
+                    PublicFields.MinPrice => "P.Price",
+                    PublicFields.MaxPrice => "P.Price",
                     _ => PublicFields.ProductId.ToString(),
                 };
             else
@@ -97,21 +105,11 @@ namespace eCommerce.Web.Data
             string strFilter = string.Empty;
             if (filter != null)
             {
-                if (filter.CategoryId.HasValue)
-                {
-                    strFilter += " AND E.CategoryId = @CategoryId ";
-                    objSqlCmd.Parameters.Add("@CategoryId", SqlDbType.Int).Value = filter.CategoryId;
-                }
-
-                if (filter.BrandId.HasValue)
-                {
-                    strFilter += " AND E.BrandId = @BrandId ";
-                    objSqlCmd.Parameters.Add("@BrandId", SqlDbType.Int).Value = (byte)filter.BrandId;
-                }
+                strFilter += " AND P.IsActive = 1";
 
                 if (!string.IsNullOrWhiteSpace(filter.FreeText))
                 {
-                    strFilter += " AND CONTAINS(E.*, @FreeText)";
+                    strFilter += " AND CONTAINS(P.*, @FreeText)";
                     objSqlCmd.Parameters.Add("@FreeText", SqlDbType.NVarChar, 1000).Value = SqlCommand.MakeContainsSearchCondition(filter.FreeText, ' ', SqlCommand.FTSOperators.AND, true);
                 }
                 if (!string.IsNullOrWhiteSpace(strFilter))
@@ -121,6 +119,8 @@ namespace eCommerce.Web.Data
             string strWithParams = string.Format(PUBLIC_SELECT_ALL, strOrderField, !orderAscendant.HasValue || orderAscendant.Value ? "ASC" : "DESC", strFilter);
             objSqlCmd.CommandType = CommandType.Text;
             int recordCount = 0;
+
+            var productList = new List<ProductModel>();
             if (from.HasValue)
             {
                 strWithParams += string.Format(PUBLIC_OFFSET, from, length);
@@ -132,7 +132,34 @@ namespace eCommerce.Web.Data
                 DataSet objDS = await objSqlCmd.ExecuteDataSetAsync();
                 recordCount = (int)objDS.Tables[0].Rows[0][0];
 
-                return (objDS.Tables[1], recordCount);
+                using var dtProducts = objDS.Tables[1];
+                using var dtImages = objDS.Tables[1].Copy();
+
+                dtProducts.Columns.Remove("ProductImageId");
+                dtProducts.Columns.Remove("Filename");
+                dtProducts.Columns.Remove("MimeType");
+                dtProducts.Columns.Remove("Order");
+
+                productList = dtProducts.Rows.OfType<DataRow>().Select(row => new ProductModel()
+                {
+                    ProductId = (int)row["ProductId"],
+                    Title = (string)row["Title"],
+                    Description = (string)row["Description"],
+                    IsDiscount = (bool)row["IsDiscount"],
+                    Price = (decimal)row["Price"],
+                    OldPrice = row.IsNull("OldPrice") ? (decimal?)null : (decimal)row["OldPrice"],
+                    Images = dtImages.Rows.OfType<DataRow>().
+                                Where(p => (int)p["ProductId"] == (int)row["ProductId"]).
+                                OrderBy(p => (byte)p["Order"]).
+                                Select(q => new ProductImageModel()
+                                {
+                                    ProductImageId = (Guid)q["ProductImageId"],
+                                    Filename = (string)q["Filename"],
+                                    MimeType = (string)q["MimeType"],
+                                    Order = (byte)q["Order"]
+                                }).ToArray()
+                }).Distinct(new ProductModelComparer()).ToList();
+
             }
             else
             {
@@ -141,8 +168,36 @@ namespace eCommerce.Web.Data
 #if DEBUG
                 System.Diagnostics.Trace.WriteLine(strWithParams);
 #endif
-                return (await objSqlCmd.ExecuteDataTableAsync(), recordCount);
+                using var dtProducts = await objSqlCmd.ExecuteDataTableAsync();
+                using var dtImages = dtProducts.Copy();
+
+                dtProducts.Columns.Remove("ProductImageId");
+                dtProducts.Columns.Remove("Filename");
+                dtProducts.Columns.Remove("MimeType");
+                dtProducts.Columns.Remove("Order");
+
+                productList = dtProducts.Rows.OfType<DataRow>().Distinct().Select(row => new ProductModel()
+                {
+                    ProductId = (int)row["ProductId"],
+                    Title = (string)row["Title"],
+                    Description = (string)row["Description"],
+                    IsDiscount = (bool)row["IsDiscount"],
+                    Price = (decimal)row["Price"],
+                    OldPrice = (decimal)row["OldPrice"],
+                    Images = dtImages.Rows.OfType<DataRow>().
+                                Where(p => (int)p["ProductId"] == (int)row["ProductId"]).
+                                OrderBy(p => (byte)p["Order"]).
+                                Select(q => new ProductImageModel()
+                                {
+                                    ProductImageId = (Guid)q["ProductImageId"],
+                                    Filename = (string)q["Filename"],
+                                    MimeType = (string)q["MimeType"],
+                                    Order = (byte)q["Order"]
+                                }).ToArray()
+                }).ToList();
             }
+
+            return (productList, recordCount);
         }
 
         #endregion
@@ -324,10 +379,10 @@ namespace eCommerce.Web.Data
         /// <param name="productId">Identificador del producto</param>
         /// <param name="userId">Identificador del usuario que realiza la acción</param>
         /// <returns>datos del producto</returns>
-        internal static async Task<ProductModel> GetAsync(int userId, int productId)
+        internal static async Task<ProductModel> GetAsync(int productId)
         {
             using var objCmd = new SqlCommand("Product_Get", CommandType.StoredProcedure);
-            objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+            //objCmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
             objCmd.Parameters.Add("@ProductId", SqlDbType.Int).Value = productId;
             var result = objCmd.AddReturnParameter();
             using var objDR = await objCmd.ExecuteReaderAsync(CommandBehavior.SingleRow);

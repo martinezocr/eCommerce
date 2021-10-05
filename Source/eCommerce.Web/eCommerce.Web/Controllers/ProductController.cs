@@ -32,6 +32,25 @@ namespace eCommerce.Web.Controllers
             _hostEnv = hostEnv;
         }
 
+
+        /// <summary>
+        /// Listado de todos los usuarios de la aplicación
+        /// </summary>
+        /// <param name="queryData">Filtros de la consulta</param>
+        /// <returns>Listado de los usuarios</returns>
+        [HttpPost("public-list")]
+        public async Task<DataTableModel> PublicListAsync([FromBody] QueryDataModel<Data.Product.PublicFilter, Data.Product.PublicFields> queryData)
+        {
+            (var objList, int recordCount) = await Product.PublicListAsync(queryData.Order, queryData.OrderAsc, queryData.Filter, queryData.From, queryData.Length);
+
+            return new DataTableModel()
+            {
+                RecordsCount = recordCount,
+                Data = objList
+            };
+        }
+
+
         /// <summary>
         /// Listado de todos los usuarios de la aplicación
         /// </summary>
@@ -52,7 +71,7 @@ namespace eCommerce.Web.Controllers
 
         [HttpPut()]
         [Authorize(Roles = "Admin")]
-        [RequestSizeLimit(104_857_600)] //100MB
+        [RequestSizeLimit(50_000_000)] //50MB
         public async Task<Product.SaveResult> PutAsync()
         {
             var files = Request.Form.Files;
@@ -71,10 +90,9 @@ namespace eCommerce.Web.Controllers
         /// <param name="productId">identificador del producto</param>
         /// <returns></returns>
         [HttpGet("{productId}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ProductModel> GetAsync(int productId)
         {
-            return await Product.GetAsync(HttpContext.GetUserId(), productId);
+            return await Product.GetAsync(productId);
         }
 
         /// <summary>

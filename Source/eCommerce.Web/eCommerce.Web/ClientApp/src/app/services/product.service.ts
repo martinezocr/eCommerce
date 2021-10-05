@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ProductModel, ProductFilter, ProductFields, ProductImageModel } from '../models/product.model';
+import { ProductModel, ProductFilter, ProductFields, ProductImageModel,ProductPublicFields } from '../models/product.model';
 import { ResponseDataModel, QueryDataModel } from '../models/api.model';
 import { Settings } from '../app.settings';
 
@@ -22,6 +22,25 @@ export class ProductService {
   API: string;
   constructor(private http: HttpClient) {
     this.API = Settings.ROOT_CONTROLLERS + 'product/';
+  }
+
+
+
+  publicList(from: number, length: number, order: ProductPublicFields, orderAsc: boolean, filter: ProductFilter, draw?: number): Promise<ResponseDataModel<ProductModel>> {
+    const data = new QueryDataModel<ProductFilter, ProductPublicFields>();
+
+    data.filter = filter;
+    data.from = from * length;
+    data.length = length;
+    data.order = order;
+    data.orderAsc = orderAsc;
+
+    return this.http.post<ResponseDataModel<ProductModel>>(this.API + 'public-list', data)
+      .toPromise()
+      .then(data => {
+        data.draw = draw;
+        return data;
+      });
   }
 
   /**

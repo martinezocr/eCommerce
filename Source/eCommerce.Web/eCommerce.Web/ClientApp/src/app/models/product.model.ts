@@ -34,3 +34,18 @@ export enum ProductFields {
 export class ProductFilter {
   freeText: string;
 }
+
+
+export enum ProductPublicFields {
+  productId = 0,
+  relevant = 1,
+  minPrice = 2,
+  maxPrice = 3
+}
+
+export class ProductPublicFilter {
+  freeText: string;
+  brandId: number;
+  categoryId: number;
+  orderBy: ProductPublicFields;
+}
